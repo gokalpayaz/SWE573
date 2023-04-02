@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\gokal\source\repos\SWE573\memories_venv
+set VIRTUAL_ENV=C:\Users\gokal\source\repos\swe573.git\SWE573\memories_venv
 
 if not defined PROMPT set PROMPT=$P$G
 

@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\gokal\source\repos\SWE573\memories_venv"
+VIRTUAL_ENV="C:\Users\gokal\source\repos\swe573.git\SWE573\memories_venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
