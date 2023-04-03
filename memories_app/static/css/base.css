@@ -1,0 +1,46 @@
+.main{
+    margin-left: 100px;
+    padding: 0px 5px;
+}
+
+
+/* navbar styling */
+.navbar{
+    padding:0px 4px;
+    margin:5px 0px;
+    text-align: center;
+    bottom: -0.2px;
+}
+
+.navbar-nav a{
+    font-family: 'Georgia (serif)' !important;
+    padding-top: 20px;
+
+}
+
+.brand{
+    display: inline-block;
+    line-height: 0.65em;
+    margin:0px;
+    padding:0px;
+    font-family: 'Georgia (serif)';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 40px;
+    color: #000000;
+    
+}
+
+.brand_label{
+    font-family: 'Georgia (serif)';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    /* identical to box height, or 400% */
+    display: inline-block;
+    line-height: 0.1em;
+    color: #000000;
+    margin:5px 10px;
+    padding-top: 15px;
+}
+
