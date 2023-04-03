@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Sign up</h2>
+  <form method="POST" action="{% url 'create_user' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="surname">Surname:</label>
+    <input type="text" id="surname" name="surname" required><br><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="birthdate">Birthdate:</label>
+    <input type="date" id="birthdate" name="birthdate" required><br><br>
+
+    <label for="photo">Photo:</label>
+    <input type="file" id="photo" name="photo"><br><br>
+
+    <!-- <label for="photo">Photo:</label>
+    <input class="form-control" type="file" id="photo" onchange="preview()" 
+    style="width: 270px; margin-bottom: 10px;" > -->
+
+    <button type="submit" class="btn btn-primary" style="width: 80px; padding: 3px;">Sign up</button>
+  </form>
+{% endblock %}

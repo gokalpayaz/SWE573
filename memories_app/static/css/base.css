@@ -44,3 +44,15 @@
     padding-top: 15px;
 }
 
+  
+  form label, form input, form button {
+    display: inline-block;
+    margin-bottom: -5px;
+  }
+  
+  form label {
+    width: 50px;
+    text-align: right;
+    margin-right: 30px;
+  }
+  

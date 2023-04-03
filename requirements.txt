@@ -5,3 +5,4 @@ django-haystack==3.2.1
 # GDAL==3.4.3
 Pillow==9.5.0
 djangorestframework==3.14.0
+django-bootstrap-icons==0.8.2
