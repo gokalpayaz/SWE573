@@ -4,6 +4,11 @@ from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.gis.db import models as geo_models
 
+
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<username>/<filename>
+    return 'images/userphoto_{0}/{1}'.format(instance.user_name, filename)
+
 class User(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
     user_name = models.CharField(unique=True, max_length=20)
@@ -11,7 +16,7 @@ class User(models.Model):
     surname = models.CharField(max_length=20)
     email = models.EmailField()
     birthdate = models.DateField()
-    photo = models.ImageField()
+    photo = models.ImageField(upload_to=user_directory_path)
     password = models.CharField(max_length=128)
 
     def set_password(self, raw_password):
@@ -59,5 +64,3 @@ class Date(models.Model):
     end_date  = models.DateField(null=True, blank=True)
     season = models.CharField(max_length=1, choices=season_choices, null=True, blank=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-
-
