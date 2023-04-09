@@ -40,3 +40,14 @@ def get_all_users(request):
     context = {'users': users}
     return render(request, 'memories/users.html', context)
 
+
+@csrf_exempt
+@api_view(['POST'])
+def login_user(request):
+    user_controller = UserController()
+    response = user_controller.login_user(request)
+    if response['success']:
+        return redirect(reverse('users'))
+    else:
+        messages.error(request, response['message'])
+        return render(request, 'memories/landing.html')

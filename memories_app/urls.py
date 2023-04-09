@@ -11,6 +11,9 @@ from django.views.generic import TemplateView
 urlpatterns = [
     # path('users/create', user_views.create_user),
     path('users/', user_views.get_all_users, name='users'),
+    path('landing/', TemplateView.as_view(template_name='memories/landing.html'), name='landing'),
     path('signup/', TemplateView.as_view(template_name='memories/signup.html'), name='signup'),
-    path('memories/create_user/', user_views.create_user, name='create_user')
+    path('create_user/', user_views.create_user, name='create_user'),
+    path('login_user/', user_views.login_user, name='login_user'),
+
 ]

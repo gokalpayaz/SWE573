@@ -28,11 +28,25 @@ class UserController():
         except Exception as e:
             return {'success': False, 'message': str(e)}
 
-
-        
     def get_all_users(self):
         try:
             users = User.objects.all()
             return list(users.values())
         except Exception as e:
             return {'success':False, 'message':str(e)}
+        
+    def login_user(self,request):
+        try:
+            username = request.data['username']
+            if not User.objects.filter(user_name=username).exists():
+                return {'success': False, 'message': "User name doesn't exists."}
+            else:
+                password = request.data['password']
+                if User.objects.filter(user_name=username).first().check_password(password):
+                    return {'success': True, 'message': 'Log in successful.'}
+                else:
+                    return {'success': False, 'message': "Wrong username, password combination."}
+        except Exception as e:
+            return {'success':False, 'message': str(e)}
+
+
