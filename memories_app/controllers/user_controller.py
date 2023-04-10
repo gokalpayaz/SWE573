@@ -1,8 +1,8 @@
 
 from ..models import User
-from django.contrib import messages
-from django.shortcuts import render, redirect
-
+from django.core.mail import send_mail
+import string
+import secrets
 class UserController():
     def create_user(self, request):
         try:
@@ -42,7 +42,6 @@ class UserController():
                 return {'success': False, 'message': "User name doesn't exists."}
             else:
                 password = request.data['password']
-                if User.objects.filter(user_name=username).first().check_password(password):
                 user = User.objects.get(user_name=username)
 
                 if user.check_password(password):
@@ -54,4 +53,25 @@ class UserController():
         except Exception as e:
             return {'success':False, 'message': str(e)}
 
+    def reset_password(self,request):
+        email = request.data['email']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return {'success': False, 'message': "User name doesn't exists."}
+        else:
 
+            alphabet = string.ascii_letters + string.digits
+            raw_password = ''.join(secrets.choice(alphabet) for i in range(10))
+            user.set_password(raw_password)
+            user.save()
+
+            send_mail(
+                'Your new password',
+                f'Your new password is: {raw_password}',
+                'noreply@memories.com',
+                [email],
+                fail_silently=False
+            )
+            return {'success': True, 'message': 'Password reset email sent'}
+        

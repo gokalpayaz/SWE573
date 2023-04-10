@@ -6,7 +6,9 @@ from rest_framework.response import Response
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.forms import SetPasswordForm
+from django.urls import reverse_lazy
 
 from ..controllers.user_controller import UserController
 
@@ -25,7 +27,6 @@ user_controller = UserController()
 @csrf_exempt
 @api_view(['POST'])
 def create_user(request):
-    user_controller = UserController()
     response = user_controller.create_user(request)
     if response['success']:
         messages.success(request, response['message'])
@@ -37,7 +38,6 @@ def create_user(request):
 @csrf_exempt
 @api_view(['GET'])
 def get_all_users(request):
-    user_controller = UserController()
     users = user_controller.get_all_users()
     context = {'users': users}
     return render(request, 'memories/users.html', context)
@@ -46,8 +46,17 @@ def get_all_users(request):
 @csrf_exempt
 @api_view(['POST'])
 def login_user(request):
-    user_controller = UserController()
     response = user_controller.login_user(request)
+    if response['success']:
+        return redirect(reverse('users'))
+    else:
+        messages.error(request, response['message'])
+        return render(request, 'memories/landing.html')
+    
+@csrf_exempt
+@api_view(['POST'])
+def reset_password(request):
+    response = user_controller.reset_password(request)
     if response['success']:
         return redirect(reverse('users'))
     else:
