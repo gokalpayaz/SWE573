@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.gis.db import models as geo_models
 
 
+
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<username>/<filename>
     return 'images/userphoto_{0}/{1}'.format(instance.user_name, filename)
@@ -18,11 +19,14 @@ class User(models.Model):
     birthdate = models.DateField()
     photo = models.ImageField(upload_to=user_directory_path)
     password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(null=True, blank=True)
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
+    def set_last_login(self):
+        self.last_login = timezone.now()
 
 class Story(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)

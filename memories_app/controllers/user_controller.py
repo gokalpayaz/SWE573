@@ -43,6 +43,11 @@ class UserController():
             else:
                 password = request.data['password']
                 if User.objects.filter(user_name=username).first().check_password(password):
+                user = User.objects.get(user_name=username)
+
+                if user.check_password(password):
+                    user.set_last_login()
+                    user.save()
                     return {'success': True, 'message': 'Log in successful.'}
                 else:
                     return {'success': False, 'message': "Wrong username, password combination."}
