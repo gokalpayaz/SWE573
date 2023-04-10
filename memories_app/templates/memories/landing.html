@@ -17,7 +17,7 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br><br>
         <input type="submit" value="Login">
-        <a href="#">Forget Password?</a>
+        <a href="{% url 'lost_password' %}">Forget Password?</a>
 </form>
 <p>Don't have an account? <a href="{% url 'signup' %}" >Sign up now</a></p>
 {% endblock %}

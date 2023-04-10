@@ -19,6 +19,8 @@ from ..controllers.user_controller import UserController
 # that includes the content of the template with the context variables filled in. 
 # The resulting HTML response is then returned to the client.
 
+user_controller = UserController()
+
 
 @csrf_exempt
 @api_view(['POST'])
