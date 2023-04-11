@@ -3,6 +3,8 @@ from ..models import User
 from django.core.mail import send_mail
 import string
 import secrets
+from django.contrib.auth import authenticate, login
+
 class UserController():
     def create_user(self, request):
         try:
@@ -42,9 +44,9 @@ class UserController():
                 return {'success': False, 'message': "User name doesn't exists."}
             else:
                 password = request.data['password']
-                user = User.objects.get(user_name=username)
-
-                if user.check_password(password):
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    login(request, user)
                     user.set_last_login()
                     user.save()
                     return {'success': True, 'message': 'Log in successful.'}
@@ -75,3 +77,5 @@ class UserController():
             )
             return {'success': True, 'message': 'Password reset email sent'}
         
+    def get_user_by_id(self,request):
+        return User.objects.get(user_name = request.data['username'])

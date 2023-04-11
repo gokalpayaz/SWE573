@@ -9,8 +9,9 @@ from django.urls import reverse
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.forms import SetPasswordForm
 from django.urls import reverse_lazy
-
+from django.contrib.auth.decorators import login_required
 from ..controllers.user_controller import UserController
+
 
 # redirect--> Django creates a redirect response that tells the client's web browser 
 # to navigate to the specified URL. The client's web browser then sends a new HTTP request to the URL,
@@ -62,3 +63,10 @@ def reset_password(request):
     else:
         messages.error(request, response['message'])
         return render(request, 'memories/landing.html')
+    
+@login_required(login_url='login')
+@api_view(['GET'])
+def profile(request):
+    user = user_controller.get_user_by_id(user_name=request.user.username)
+    context = {'user': user}
+    return render(request, 'memories/profile.html', context)

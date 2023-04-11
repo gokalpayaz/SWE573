@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Profile</h2>
+  <form id="profile-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="id_name">Name:</label>
+    <div id="name-wrapper" class="field-wrapper" onclick="toggleField(this)">
+      <span class="field-value" value="{{ user.name }}">{{ user.name }}</span>
+      <input type="text" id="id_name" name="name" required>
+    </div>
+
+    <label for="id_surname">Surname:</label>
+    <div id="surname-wrapper" class="field-wrapper" onclick="toggleField(this)">
+      <span class="field-value" value="{{ user.surname }}">{{ user.surname }}</span>
+      <input type="text" id="id_surname" name="surname" required>
+    </div>
+
+    <label for="id_email">Email:</label>
+    <div id="email-wrapper" class="field-wrapper" onclick="toggleField(this)">
+      <span class="field-value" value="{{ user.email }}">{{ user.email }}</span>
+      <input type="email" id="id_email" name="email" value="{{ user.email }}" required>
+    </div>
+
+    <label for="id_birthdate">Birthdate:</label>
+    <div id="birthdate-wrapper" class="field-wrapper" onclick="toggleField(this)">
+      <span class="field-value" value="{{ user.birthdate }}">{{ user.birthdate }}</span>
+      <input type="date" id="id_birthdate" name="birthdate" required>
+    </div>
+
+    <label for="id_photo">Photo:</label>
+    <div id="photo-wrapper" class="field-wrapper" onclick="toggleField(this)">
+      {% if user.photo %}
+        <img class="field-value" src="{{ user.photo.url }}" alt="Profile photo" width="150">
+      {% else %}
+        <span class="field-value">No photo</span>
+      {% endif %}
+      <input type="file" id="id_photo" name="photo">
+    </div>
+
+    <button type="submit">Save</button>
+  </form>
+
+  <script>
+    function toggleField(wrapper) {
+      let valueEl = wrapper.querySelector('.field-value');
+      let inputEl = wrapper.querySelector('input');
+      if (valueEl.style.display === 'none') {
+        valueEl.style.display = 'inline';
+        inputEl.style.display = 'none';
+      } else {
+        valueEl.style.display = 'none';
+        inputEl.style.display = 'inline';
+        inputEl.value = valueEl.getAttribute('value');
+      }
+    }
+  </script>
+{% endblock %}
