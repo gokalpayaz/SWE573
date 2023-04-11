@@ -1,25 +1,26 @@
 
-from ..models import User
+from ..models import CustomUser
 from django.core.mail import send_mail
 import string
 import secrets
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.hashers import make_password
 
 class UserController():
     def create_user(self, request):
         try:
             # Check if user is already present:
-            if User.objects.filter(user_name=request.data['username']).exists():            
+            if CustomUser.objects.filter(username=request.data['username']).exists():            
                 return {'success': False, 'message': 'Username already taken.'}
             
 
-            user = User.objects.create(
-                id = User.objects.latest('id').id+1,
-                user_name=request.data['username'],
-                name=request.data['name'],
-                surname=request.data['surname'],
+            user = CustomUser.objects.create(
+                id = CustomUser.objects.latest('id').id+1,
+                username=request.data['username'],
+                first_name=request.data['first_name'],
+                last_name=request.data['last_name'],
                 email=request.data['email'],
-                birthdate=request.data['birthdate'],
+                birth_date=request.data['birth_date'],
                 photo=request.data['photo'],
                 password=request.data['password'],
             )
@@ -32,34 +33,27 @@ class UserController():
 
     def get_all_users(self):
         try:
-            users = User.objects.all()
+            users = CustomUser.objects.all()
             return list(users.values())
         except Exception as e:
             return {'success':False, 'message':str(e)}
         
     def login_user(self,request):
-        try:
-            username = request.data['username']
-            if not User.objects.filter(user_name=username).exists():
-                return {'success': False, 'message': "User name doesn't exists."}
-            else:
-                password = request.data['password']
-                user = authenticate(request, username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    user.set_last_login()
-                    user.save()
-                    return {'success': True, 'message': 'Log in successful.'}
-                else:
-                    return {'success': False, 'message': "Wrong username, password combination."}
-        except Exception as e:
-            return {'success':False, 'message': str(e)}
+        username = request.data['username']
+        password = request.data['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return {'success': True, 'message': 'Log in successful.'}
+        else:
+            return {'success': False, 'message': "Wrong username, password combination."}
+
 
     def reset_password(self,request):
         email = request.data['email']
         try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
             return {'success': False, 'message': "User name doesn't exists."}
         else:
 
@@ -78,4 +72,4 @@ class UserController():
             return {'success': True, 'message': 'Password reset email sent'}
         
     def get_user_by_id(self,request):
-        return User.objects.get(user_name = request.data['username'])
+        return CustomUser.objects.get(user_name = request.data['username'])

@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.gis.db import models as geo_models
+from django.contrib.auth.models import AbstractUser
 
 
 
@@ -10,27 +11,38 @@ def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<username>/<filename>
     return 'images/userphoto_{0}/{1}'.format(instance.user_name, filename)
 
-class User(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True)
-    user_name = models.CharField(unique=True, max_length=20)
-    name = models.CharField(max_length=20)
-    surname = models.CharField(max_length=20)
-    email = models.EmailField()
-    birthdate = models.DateField()
+class CustomUser(AbstractUser):
     photo = models.ImageField(upload_to=user_directory_path)
-    password = models.CharField(max_length=128)
-    last_login = models.DateTimeField(null=True, blank=True)
-
+    birth_date = models.DateField(null=True, blank=True)
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='memories_app_users',
+        blank=True,
+        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='memories_app_users',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
+    def __str__(self):
+        return self.username
+    
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
+        
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
+        
     def set_last_login(self):
         self.last_login = timezone.now()
 
 class Story(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     text = models.TextField()
     publish_date = models.DateTimeField(default=timezone.now)
@@ -41,12 +53,12 @@ class Tags(models.Model):
 
 class Like(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
 
 class Comments(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
     text = models.TextField(max_length=200)
 
