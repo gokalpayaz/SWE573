@@ -10,7 +10,9 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.forms import SetPasswordForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
+from ..models import CustomUser
 
 
 # redirect--> Django creates a redirect response that tells the client's web browser 
@@ -36,7 +38,7 @@ def create_user(request):
         messages.error(request, response['message'])
         return redirect(reverse('signup'))
 
-@csrf_exempt
+@login_required(login_url='login_user')
 @api_view(['GET'])
 def get_all_users(request):
     users = user_controller.get_all_users()
@@ -54,6 +56,14 @@ def login_user(request):
         messages.error(request, response['message'])
         return render(request, 'memories/landing.html')
     
+@login_required(login_url='login_user')
+@api_view(['GET'])
+def logout_user(request):
+    if request.user != None:
+        logout(request)
+    return redirect("/")
+
+
 @csrf_exempt
 @api_view(['POST'])
 def reset_password(request):
@@ -64,9 +74,9 @@ def reset_password(request):
         messages.error(request, response['message'])
         return render(request, 'memories/landing.html')
     
-@login_required(login_url='login')
+@login_required(login_url='login_user')
 @api_view(['GET'])
 def profile(request):
-    user = user_controller.get_user_by_id(user_name=request.user.username)
+    user = CustomUser.objects.get(username=request.user.username)
     context = {'user': user}
     return render(request, 'memories/profile.html', context)

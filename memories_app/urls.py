@@ -15,6 +15,7 @@ urlpatterns = [
     path('signup/', TemplateView.as_view(template_name='memories/signup.html'), name='signup'),
     path('create_user/', user_views.create_user, name='create_user'),
     path('login_user/', user_views.login_user, name='login_user'),
+    path('logout_user/', user_views.logout_user, name='logout_user'),
     path('lost_password/', TemplateView.as_view(template_name='memories/lost_password.html'), name='lost_password'),
     path('lost_password/reset_password/', user_views.reset_password, name='reset_password'),
     path('profile/', user_views.profile, name='profile'),

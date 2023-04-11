@@ -3,7 +3,7 @@ from ..models import CustomUser
 from django.core.mail import send_mail
 import string
 import secrets
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 
 class UserController():
@@ -47,8 +47,7 @@ class UserController():
             return {'success': True, 'message': 'Log in successful.'}
         else:
             return {'success': False, 'message': "Wrong username, password combination."}
-
-
+        
     def reset_password(self,request):
         email = request.data['email']
         try:
@@ -71,5 +70,3 @@ class UserController():
             )
             return {'success': True, 'message': 'Password reset email sent'}
         
-    def get_user_by_id(self,request):
-        return CustomUser.objects.get(user_name = request.data['username'])
