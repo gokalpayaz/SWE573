@@ -69,4 +69,25 @@ class UserController():
                 fail_silently=False
             )
             return {'success': True, 'message': 'Password reset email sent'}
-        
+    
+    def update_profile(self,request):
+        user = request.user
+        user.first_name = request.data["first_name"]
+        user.last_name = request.data["last_name"]
+        user.email = request.data["email"]
+        user.birth_date = request.data["birth_date"]
+
+        password = request.data["password"]
+        if password == "":
+            user.save()
+            return {'success': True, 'message': 'Saved successfuly'}
+        else:
+            if password == request.data["password_confirm"]:
+                user.set_password(password)
+                user.save()
+                return {'success': True, 'message': 'Saved successfuly'}
+            else:
+                return {'success': False, 'message': "Password don't match"}
+
+
+
