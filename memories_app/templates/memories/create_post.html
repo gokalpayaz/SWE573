@@ -25,6 +25,12 @@
       </select>
     </div>
 
+    <div class="mb-3">
+      <label for="imageUpload" class="form-label">Upload Image</label>
+      <input class="form-control" type="file" id="imageUpload" name="imageUpload[]" accept="image/*" multiple>
+      <div id="imagePreviewContainer" class="row mt-3"></div>
+    </div>
+
 <!-- Map Section -->
 <div class="mb-3">
   <label for="location" class="form-label">Select Location:</label>
@@ -95,6 +101,34 @@ window.addEventListener('DOMContentLoaded', function () {
   radiusSlider.addEventListener('input', function () {
     radiusValue.textContent = radiusSlider.value;
   });
+});
+
+// Listen for changes on the file input
+document.getElementById('imageUpload').addEventListener('change', function(event) {
+    var imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    var files = event.target.files;
+
+    // Remove previous image previews
+    imagePreviewContainer.innerHTML = '';
+
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = (function(fileIndex) {
+                return function(e) {
+                    var imagePreview = document.createElement('img');
+                    imagePreview.src = e.target.result;
+                    imagePreview.alt = 'Image Preview';
+                    imagePreview.className = 'img-fluid col-md-4 mt-3';
+
+                    imagePreviewContainer.appendChild(imagePreview);
+                };
+            })(i);
+            reader.readAsDataURL(file);
+        }
+    }
 });
 
   </script>
