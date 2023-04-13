@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import user_views
+from .views import user_views, story_views
 from django.views.generic import TemplateView
 
 
@@ -20,6 +20,7 @@ urlpatterns = [
     path('lost_password/reset_password/', user_views.reset_password, name='reset_password'),
     path('profile/', user_views.profile, name='profile'),
     path('profile/update_profile', user_views.update_profile, name='update_profile'),
+    path('create_post/', story_views.create_post, name='create_post'),
 
 
 
