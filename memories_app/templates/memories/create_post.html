@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Create a new blog post</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    
+    <div class="mb-3">
+      <label for="text" class="form-label">Text</label>
+      <textarea class="form-control" id="text" name="text" rows="5" required></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="tags" class="form-label">Tags</label>
+      <select class="form-select" id="tags" name="tags" multiple>
+        {% for tag in tags %}
+          <option value="{{ tag.id }}">{{ tag.tag }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+<!-- Map Section -->
+<div class="mb-3">
+  <label for="location" class="form-label">Select Location:</label>
+  <div id="map" style="width: 100%; height: 300px"></div>
+</div>
+
+<!-- Search bar and Radius Section -->
+<div class="row mb-3">
+  <div class="col">
+      <label for="radius" class="form-label">Radius (meters):</label>
+      <input type="range" class="form-range" id="radius" min="100" max="1000" step="100" value="500">
+      <span id="radius-value">500</span> meters
+  </div>
+</div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  function initMap() {
+    var map = L.map('map', {
+      center: [51.505, -0.09],
+      zoom: 13,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    var geocoder = L.Control.Geocoder.nominatim();
+    var control = L.Control.geocoder({
+      geocoder: geocoder,
+      defaultMarkGeocode: false,
+    }).addTo(map);
+
+    control.on('markgeocode', function (e) {
+      map.setView(e.geocode.center, 16);
+      // Your code to set the default radius when a location is found
+    });
+
+    // Declare a variable to store the marker
+    let marker;
+
+    // Add a click event listener to the map
+    map.on('click', function (event) {
+      const clickedLocation = event.latlng;
+
+      // Remove the previous marker if it exists
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      // Add a new marker to the clicked location
+      marker = L.marker(clickedLocation).addTo(map);
+
+      // Update the map view
+      map.setView(clickedLocation, map.getZoom());
+    });
+  }
+
+  initMap();
+
+  // Update radius value display
+  var radiusSlider = document.getElementById('radius');
+  var radiusValue = document.getElementById('radius-value');
+  radiusSlider.addEventListener('input', function () {
+    radiusValue.textContent = radiusSlider.value;
+  });
+});
+
+  </script>
+  {% endblock %}
+  
