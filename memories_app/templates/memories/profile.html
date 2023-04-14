@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <form id="profile-form" method="POST" enctype="multipart/form-data" action="{% url 'update_profile' %}">
   {% csrf_token %}
   <div class="container rounded bg-white mt-5 mb-5">
     <div class="row">
-        <div class="col-md-3 border-right">
-            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
-              <a href="#" onclick="document.getElementById('id_photo').click(); return false;">
-                {% if data.photo %}
-                  <img class="rounded-circle mt-5" width="150px" src="{{ data.photo.url }}">
-                {% else %}
-                  <img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
-                {% endif %}
-              </a>
-              <input id="id_photo" name="photo" type="file" name="photo" style="display: none;" onchange="{ 'create_user'}">
-              <span class="font-weight-bold">{{data.username}}</span><span> </span>
-            </div>
+      <div class="col-md-3 border-right">
+        <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+          {% if not data.photo %}
+            <img id="imagePreview" class="img-fluid m-3 rounded-circle" src="http://cdn.onlinewebfonts.com/svg/img_24787.png" alt="Image Preview"/>
+          {% else %}
+            <img id="imagePreview" class="img-fluid m-3 rounded-circle" src="{{ data.photo.url }}" alt="Image Preview"/>
+          {% endif %}          
+          <input class="form-control m-3" type="file" id="imageUpload" name="imageUpload" accept="image/*">
+          <span class="font-weight-bold">{{data.username}}</span><span> </span>
         </div>
+      </div>
+      
         <div class="col-md-5 border-right">
             <div class="p-3 py-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -29,7 +29,7 @@
                 </div>
                 <div class="row mt-3">
                   <div class="col-md-12"><label class="labels">Email</label><input type="text" class="form-control" name="email" placeholder="enter email" value="{{ data.email }}"></div>
-                  <div class="col-md-12"><label class="labels">Birthdate</label><input type="date" class="form-control" name="birth_date" placeholder="enter birth date" value="{{ data.birth_date|date:'Y-m-d' }}"></div>
+                  <div class="col-md-12"><label class="labels">Birthdate</label><input type="date" class="form-control" name="birth_date" placeholder="1111-11-11" value="{{ data.birth_date|date:'Y-m-d' }}"></div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-md-12"><label class="labels">Password</label><input type="password" class="form-control" name="password" placeholder="password" ></div>
@@ -43,5 +43,23 @@
     </div>
   </div>
 </form>
+<script>
+// Listen for changes on the file input
+document.getElementById('imageUpload').addEventListener('change', function(event) {
+    var imagePreview = document.getElementById('imagePreview');
+    var file = event.target.files[0];
 
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    } else {
+        imagePreview.src = '';
+        imagePreview.style.display = 'none';
+    }
+});
+</script>
 {% endblock %}            

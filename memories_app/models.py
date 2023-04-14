@@ -9,7 +9,7 @@ from django.contrib.auth.models import AbstractUser
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<username>/<filename>
-    return 'images/userphoto_{0}/{1}'.format(instance.user_name, filename)
+    return 'images/userphoto_{0}/{1}'.format(instance.username, filename)
 
 class CustomUser(AbstractUser):
     photo = models.ImageField(upload_to=user_directory_path)
@@ -28,8 +28,8 @@ class CustomUser(AbstractUser):
         help_text='Specific permissions for this user.',
         verbose_name='user permissions',
     )
-    def __str__(self):
-        return self.username
+
+
     
     def set_password(self, raw_password):
         self.password = make_password(raw_password)

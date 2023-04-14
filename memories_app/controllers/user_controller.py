@@ -76,6 +76,7 @@ class UserController():
         user.last_name = request.data["last_name"]
         user.email = request.data["email"]
         user.birth_date = request.data["birth_date"]
+        user.photo = request.data["imageUpload"]
 
         password = request.data["password"]
         if password == "":

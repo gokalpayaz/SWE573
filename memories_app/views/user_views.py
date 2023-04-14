@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
 from ..models import CustomUser
-
+from django.conf import settings
 
 # redirect--> Django creates a redirect response that tells the client's web browser 
 # to navigate to the specified URL. The client's web browser then sends a new HTTP request to the URL,
@@ -89,7 +89,7 @@ def profile(request):
     }
     # return render(request, 'memories/profile.html', context)
     context = {
-        'data': data
+        'data': data,
     }
     return render(request, 'memories/profile.html', context)
 
@@ -102,5 +102,5 @@ def update_profile(request):
         return redirect(reverse("profile"))
     else:
         messages.error(request, response['message'])
-        return render(request, 'memories/profile.html')
+        return redirect(reverse('profile'))
 
