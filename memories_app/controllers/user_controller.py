@@ -13,20 +13,24 @@ class UserController():
             if CustomUser.objects.filter(username=request.data['username']).exists():            
                 return {'success': False, 'message': 'Username already taken.'}
             
+            password = request.data['password']
+            password_confirm = request.data['password_confirm']
 
-            user = CustomUser.objects.create(
-                id = CustomUser.objects.latest('id').id+1,
-                username=request.data['username'],
-                first_name=request.data['first_name'],
-                last_name=request.data['last_name'],
-                email=request.data['email'],
-                birth_date=request.data['birth_date'],
-                photo=request.data['photo'],
-                password=request.data['password'],
-            )
-            user.set_password(user.password)
-            user.save()
-            return {'success': True, 'message': 'User created successfully.'}
+            if password == password_confirm:
+                user = CustomUser.objects.create(
+                    id = CustomUser.objects.latest('id').id+1,
+                    username=request.data['username'],
+                    first_name=request.data['first_name'],
+                    last_name=request.data['last_name'],
+                    email=request.data['email'],
+                    birth_date=request.data['birth_date'],
+                    photo=request.data['imageUpload'],
+                )
+                user.set_password(password)
+                user.save()
+                return {'success': True, 'message': 'User created successfully.'}
+            else:
+                return {'success': False, 'message': "Password don't match"}
 
         except Exception as e:
             return {'success': False, 'message': str(e)}

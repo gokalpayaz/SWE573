@@ -1,34 +1,66 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-  <h2>Sign up</h2>
-  <form method="POST" action="{% url 'create_user' %}" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required><br><br>
+<form id="profile-form" method="POST" enctype="multipart/form-data" action="{% url 'create_user' %}">
+  {% csrf_token %}
+  <div class="container fluid p-1 border rounded bg-white m-5">
+    <div class="row">
+      <div class="col-md-3 border-right">
+        <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+          <img id="imagePreview" class="img-fluid m-3 rounded-circle"
+            src="http://cdn.onlinewebfonts.com/svg/img_24787.png" alt="Image Preview" />
+          <input class="form-control m-3" type="file" id="imageUpload" name="imageUpload" accept="image/*">
+        </div>
+      </div>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required><br><br>
+      <div class="col-md-5 p-1">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="text-right">Profile Settings</h4>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6"><label class="labels">Name</label><input type="text" class="form-control"
+              name="first_name" placeholder="first name" ></div>
+          <div class="col-md-6"><label class="labels">Surname</label><input type="text" class="form-control"
+              name="last_name" placeholder="surname" ></div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-12"><label class="labels">Email</label><input type="text" class="form-control" name="email"
+              placeholder="enter email" ></div>
+          <div class="col-md-12"><label class="labels">Username</label><input type="text" class="form-control" name="username"
+              placeholder="enter username" ></div>
+          <div class="col-md-12 pt-3"><label class="labels">Birthdate</label><input type="date" class="form-control"
+              name="birth_date" placeholder="1111-11-11"></div>
+          <div class="col-md-12 pt-3"><label class="labels">Password</label><input type="password" class="form-control"
+              name="password" placeholder="password"></div>
+          <div class="col-md-12 pt-3"><label class="labels">Confirm</label><input type="password" class="form-control"
+              name="password_confirm" placeholder="repeat password"></div>
+        </div>
+        <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="submit">Save Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</form>
+<script>
+  // Listen for changes on the file input
+  document.getElementById('imageUpload').addEventListener('change', function (event) {
+    var imagePreview = document.getElementById('imagePreview');
+    var file = event.target.files[0];
 
-    <label for="first_name">Name:</label>
-    <input type="text" id="name" name="first_name" required><br><br>
-
-    <label for="last_name">Surname:</label>
-    <input type="text" id="surname" name="last_name" required><br><br>
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <label for="birth_date">Birthdate:</label>
-    <input type="date" id="birthdate" name="birth_date" required><br><br>
-
-    <label for="photo">Photo:</label>
-    <input type="file" id="photo" name="photo"><br><br>
-
-    <!-- <label for="photo">Photo:</label>
-    <input class="form-control" type="file" id="photo" onchange="preview()" 
-    style="width: 270px; margin-bottom: 10px;" > -->
-
-    <button type="submit" class="btn btn-primary" style="width: 80px; padding: 3px;">Sign up</button>
-  </form>
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+    }
+  });
+</script>
 {% endblock %}
