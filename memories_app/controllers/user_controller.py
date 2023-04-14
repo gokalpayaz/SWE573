@@ -95,4 +95,24 @@ class UserController():
                 return {'success': False, 'message': "Password don't match"}
 
 
+    def render_profile(self,request):
+        try:
+            user = request.user
+            data = {
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'username': user.username,
+                'birth_date': user.birth_date,
+                'photo': user.photo,
+            }
+            # return render(request, 'memories/profile.html', context)
+            context = {
+                'data': data,
+            }
+            return {'success': True, 'message': 'Saved successfuly', 'context':context}
+        except Exception as e:
+            return {'success':False, 'message':str(e)}
+
+        
 

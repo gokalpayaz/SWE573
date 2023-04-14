@@ -77,21 +77,12 @@ def reset_password(request):
 @login_required(login_url='login_user')
 @api_view(['GET'])
 def profile(request):
-
-    user = request.user
-    data = {
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email,
-        'username': user.username,
-        'birth_date': user.birth_date,
-        'photo': user.photo,
-    }
-    # return render(request, 'memories/profile.html', context)
-    context = {
-        'data': data,
-    }
-    return render(request, 'memories/profile.html', context)
+    response = user_controller.render_profile(request)
+    if response['success']:
+        return render(request, 'memories/profile.html', response["context"])
+    else:
+        messages.error(request, response['message'])
+        return render(request, 'memories/landing.html')
 
 
 @login_required(login_url='login_user')
