@@ -12,8 +12,9 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
-from ..models import Tags, Story, Location
+from ..models import Tags, Story, Location, StoryPhoto
 from django.contrib.gis.geos import Point
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 def create_post(request):
@@ -38,6 +39,10 @@ def create_post(request):
         location.radius = float(radius)
         location.story = story
         location.save()
+
+        for image in images:
+            story_photo = StoryPhoto(story=story, photo=image)
+            story_photo.save()
 
         for tag_id in tag_ids:
             story.tags.add(tag_id)
