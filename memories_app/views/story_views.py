@@ -14,6 +14,7 @@ from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
 from ..models import Tags, Story, Location
 
+
 def create_post(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -22,6 +23,7 @@ def create_post(request):
         location_name = request.POST['location_name']
         point = request.POST['point']
         radius = request.POST['radius']
+        images = request.FILES.getlist('imageUpload')
 
         story = Story(user=request.user, title=title, text=text)
         story.save()
