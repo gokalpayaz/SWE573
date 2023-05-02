@@ -113,6 +113,7 @@
         geocoder.reverse(clickedLocation, map.getZoom(), function (results) {
           const location = results[0];
           locationName = location.name;
+          document.getElementById('location-name').value = locationName;
           console.log(locationName);
         })
       });
