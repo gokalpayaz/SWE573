@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
 from ..models import Tags, Story, Location
+from django.contrib.gis.geos import Point
 
 
 def create_post(request):
@@ -20,13 +21,20 @@ def create_post(request):
         title = request.POST['title']
         text = request.POST['text']
         tag_ids = request.POST.getlist('tags')
-        location_name = request.POST['location_name']
-        point = request.POST['point']
+        location_name = request.POST['location-name']
+        point = request.POST['location-point']
         radius = request.POST['radius']
         images = request.FILES.getlist('imageUpload')
+        print(location_name)
+        print(point)
 
         story = Story(user=request.user, title=title, text=text)
         story.save()
+
+        location = Location()
+        location.name = location_name
+        location.point = Point(float(point.split(",")[0]),float(point.split(",")[1]))
+        location.story = story
 
         for tag_id in tag_ids:
             story.tags.add(tag_id)
