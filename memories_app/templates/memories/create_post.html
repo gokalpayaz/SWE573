@@ -98,16 +98,23 @@
         // Add a new marker to the clicked location
         marker = L.marker(clickedLocation).addTo(map);
 
-      // Update the location information
+        // Update the location information
         locationName = '';
         locationPoint = clickedLocation;
-        
+
         // Update the map view
         map.setView(clickedLocation, map.getZoom());
         // console.log(clickedLocation.lat+ ',' +clickedLocation.lng)
         // Set the value of the location input element
-        document.getElementById('location-point').value = clickedLocation.lat+ ',' +clickedLocation.lng;
+        document.getElementById('location-point').value = clickedLocation.lat + ',' + clickedLocation.lng;
         console.log(document.getElementById('location-point').value)
+
+        // Use the geocoder to get the location name
+        geocoder.reverse(clickedLocation, map.getZoom(), function (results) {
+          const location = results[0];
+          locationName = location.name;
+          console.log(locationName);
+        })
       });
     }
 
