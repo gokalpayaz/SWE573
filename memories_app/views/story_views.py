@@ -17,6 +17,7 @@ from django.contrib.gis.geos import Point
 
 
 def create_post(request):
+    # If user is submitting, request method will be post, if user is launching the page it will be get
     if request.method == 'POST':
         title = request.POST['title']
         text = request.POST['text']
@@ -40,8 +41,9 @@ def create_post(request):
         for tag_id in tag_ids:
             story.tags.add(tag_id)
 
-        return redirect('your_desired_post_view', story.id)
-
-    tags = Tags.objects.all()
-    context = {'tags': tags}
-    return render(request, 'memories/create_post.html', context)
+        return render(request, 'memories/landing.html')
+    
+    else:
+        tags = Tags.objects.all()
+        context = {'tags': tags}
+        return render(request, 'memories/create_post.html', context)
