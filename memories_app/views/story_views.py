@@ -24,7 +24,7 @@ def create_post(request):
         location_name = request.POST['location-name']
         point = request.POST['location-point']
         radius = request.POST['radius']
-        images = request.FILES.getlist('imageUpload')
+        images = request.FILES.getlist('imageUpload[]')
         print(location_name)
         print(point)
 
