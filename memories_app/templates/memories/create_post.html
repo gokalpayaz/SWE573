@@ -35,6 +35,8 @@
     <div class="mb-3">
       <label for="location" class="form-label">Select Location:</label>
       <div id="map" style="width: 100%; height: 300px"></div>
+      <input type="hidden" id="location-name" name="location-name">
+      <input type="hidden" id="location-point" name="location-point">
     </div>
 
     <!-- Search bar and Radius Section -->
@@ -71,10 +73,18 @@
       control.on('markgeocode', function (e) {
         map.setView(e.geocode.center, 16);
         // Your code to set the default radius when a location is found
+
+        // Set the location name field value
+        document.getElementById('location-name').value = e.geocode.name;
+
+        // Set the location point field value
+        document.getElementById('location-point').value = e.geocode.center.lat + ',' + e.geocode.center.lng;
       });
 
       // Declare a variable to store the marker
       let marker;
+      let locationName;
+      let locationPoint;
 
       // Add a click event listener to the map
       map.on('click', function (event) {
@@ -88,12 +98,21 @@
         // Add a new marker to the clicked location
         marker = L.marker(clickedLocation).addTo(map);
 
+      // Update the location information
+        locationName = '';
+        locationPoint = clickedLocation;
+        
         // Update the map view
         map.setView(clickedLocation, map.getZoom());
+        // console.log(clickedLocation.lat+ ',' +clickedLocation.lng)
+        // Set the value of the location input element
+        document.getElementById('location-point').value = clickedLocation.lat+ ',' +clickedLocation.lng;
+        console.log(document.getElementById('location-point').value)
       });
     }
 
     initMap();
+
 
     // Update radius value display and input element value
     var radiusSlider = document.getElementById('radius');

@@ -20,10 +20,12 @@ def create_post(request):
         title = request.POST['title']
         text = request.POST['text']
         tag_ids = request.POST.getlist('tags')
-        location_name = request.POST['location_name']
-        point = request.POST['point']
+        location_name = request.POST['location-name']
+        point = request.POST['location-point']
         radius = request.POST['radius']
         images = request.FILES.getlist('imageUpload')
+        print(location_name)
+        print(point)
 
         story = Story(user=request.user, title=title, text=text)
         story.save()
