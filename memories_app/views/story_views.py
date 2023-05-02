@@ -37,6 +37,7 @@ def create_post(request):
         location.point = Point(float(point.split(",")[0]),float(point.split(",")[1]))
         location.radius = float(radius)
         location.story = story
+        location.save()
 
         for tag_id in tag_ids:
             story.tags.add(tag_id)
