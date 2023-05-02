@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
   <h2>Create a new blog post</h2>
-  <form method="post" enctype="multipart/form-data">
+  <form method="post" id="mainform" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="mb-3">
@@ -158,6 +158,22 @@
       }
     }
   });
+
+  // Check if user has selected a location by any means.
+  // If not, alert user and avoid posting.
+  const form = document.querySelector('#mainform');
+  form.addEventListener('submit', handleSubmit);
+  function handleSubmit() {
+    console.log("entry")
+    // Check if the location field is empty
+    const locationField = document.getElementById('location-name');
+    const locationPoint = document.getElementById('location-point');
+
+    if (!locationField.value | !locationPoint.value) {
+      alert('Please select a location');
+      event.preventDefault();
+    }
+  }
 
 </script>
 {% endblock %}
