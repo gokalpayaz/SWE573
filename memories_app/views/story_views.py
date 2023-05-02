@@ -34,15 +34,11 @@ def create_post(request):
         location = Location()
         location.name = location_name
         location.point = Point(float(point.split(",")[0]),float(point.split(",")[1]))
+        location.radius = float(radius)
         location.story = story
 
         for tag_id in tag_ids:
             story.tags.add(tag_id)
-
-        if location_name and point:
-            lat, lng = point.split(',')
-            location = Location(name=location_name, point=f"POINT({lat} {lng})", radius=radius, story=story)
-            location.save()
 
         return redirect('your_desired_post_view', story.id)
 
