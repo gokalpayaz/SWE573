@@ -46,10 +46,11 @@ class Story(models.Model):
     title = models.CharField(max_length=50)
     text = models.TextField()
     publish_date = models.DateTimeField(default=timezone.now)
-    tags = models.ManyToManyField('Tags')
+    # tags = models.ManyToManyField('Tags')
 
 class Tags(models.Model):
-    tag = models.CharField(max_length=20, unique=True)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    tag = models.CharField(max_length=20)
 
 class Like(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
