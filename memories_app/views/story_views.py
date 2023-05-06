@@ -22,7 +22,7 @@ def create_post(request):
     if request.method == 'POST':
         title = request.POST['title']
         text = request.POST['text']
-        tag_ids = request.POST.getlist('tags')
+        tags = request.POST.get('tags').split(',')
         location_name = request.POST['location-name']
         point = request.POST['location-point']
         radius = request.POST['radius']
@@ -44,12 +44,13 @@ def create_post(request):
             story_photo = StoryPhoto(story=story, photo=image)
             story_photo.save()
 
-        for tag_id in tag_ids:
-            story.tags.add(tag_id)
+        for tag_name in tags:
+            if tag_name != '':
+                tag, created = Tags.objects.get_or_create(tag=tag_name, story=story)
+                tag.save()
 
         return render(request, 'memories/landing.html')
     
     else:
-        tags = Tags.objects.all()
-        context = {'tags': tags}
-        return render(request, 'memories/create_post.html', context)
+
+        return render(request, 'memories/create_post.html')

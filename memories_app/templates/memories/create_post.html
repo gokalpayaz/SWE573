@@ -18,12 +18,9 @@
 
     <div class="mb-3">
       <label for="tags" class="form-label">Tags</label>
-      <select class="form-select" id="tags" name="tags" multiple>
-        {% for tag in tags %}
-        <option value="{{ tag.id }}">{{ tag.tag }}</option>
-        {% endfor %}
-      </select>
+      <input type="text" class="form-control" id="tags" name="tags" placeholder="Type tags separated by commas">
     </div>
+    
 
     <div class="mb-3">
       <label for="imageUpload" class="form-label">Upload Image</label>
@@ -174,6 +171,7 @@
       event.preventDefault();
     }
   }
+
 
 </script>
 {% endblock %}
