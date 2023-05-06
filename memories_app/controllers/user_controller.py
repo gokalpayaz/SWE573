@@ -18,7 +18,7 @@ class UserController():
 
             if password == password_confirm:
                 user = CustomUser.objects.create(
-                    id = CustomUser.objects.latest('id').id+1,
+                    # id = CustomUser.objects.latest('id').id+1,
                     username=request.data['username'],
                     first_name=request.data['first_name'],
                     last_name=request.data['last_name'],
