@@ -41,15 +41,16 @@ class CustomUser(AbstractUser):
         self.last_login = timezone.now()
 
 class Story(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True)
+    id = models.AutoField(primary_key=True, unique=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     text = models.TextField()
     publish_date = models.DateTimeField(default=timezone.now)
-    tags = models.ManyToManyField('Tags')
+    # tags = models.ManyToManyField('Tags')
 
 class Tags(models.Model):
-    tag = models.CharField(max_length=20, unique=True)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    tag = models.CharField(max_length=20)
 
 class Like(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
@@ -80,3 +81,7 @@ class Date(models.Model):
     end_date  = models.DateField(null=True, blank=True)
     season = models.CharField(max_length=1, choices=season_choices, null=True, blank=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
+
+class StoryPhoto(models.Model):
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='photos')
+    photo = models.ImageField(upload_to="images/story_photos")

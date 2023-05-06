@@ -12,19 +12,21 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
-from ..models import Tags, Story, Location
+from ..models import Tags, Story, Location, StoryPhoto
 from django.contrib.gis.geos import Point
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 def create_post(request):
+    # If user is submitting, request method will be post, if user is launching the page it will be get
     if request.method == 'POST':
         title = request.POST['title']
         text = request.POST['text']
-        tag_ids = request.POST.getlist('tags')
+        tags = request.POST.get('tags').split(',')
         location_name = request.POST['location-name']
         point = request.POST['location-point']
         radius = request.POST['radius']
-        images = request.FILES.getlist('imageUpload')
+        images = request.FILES.getlist('imageUpload[]')
         print(location_name)
         print(point)
 
@@ -34,18 +36,21 @@ def create_post(request):
         location = Location()
         location.name = location_name
         location.point = Point(float(point.split(",")[0]),float(point.split(",")[1]))
+        location.radius = float(radius)
         location.story = story
+        location.save()
 
-        for tag_id in tag_ids:
-            story.tags.add(tag_id)
+        for image in images:
+            story_photo = StoryPhoto(story=story, photo=image)
+            story_photo.save()
 
-        if location_name and point:
-            lat, lng = point.split(',')
-            location = Location(name=location_name, point=f"POINT({lat} {lng})", radius=radius, story=story)
-            location.save()
+        for tag_name in tags:
+            if tag_name != '':
+                tag, created = Tags.objects.get_or_create(tag=tag_name, story=story)
+                tag.save()
 
-        return redirect('your_desired_post_view', story.id)
+        return render(request, 'memories/landing.html')
+    
+    else:
 
-    tags = Tags.objects.all()
-    context = {'tags': tags}
-    return render(request, 'memories/create_post.html', context)
+        return render(request, 'memories/create_post.html')
