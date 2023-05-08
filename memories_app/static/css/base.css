@@ -48,11 +48,16 @@
   form label, form input, form button {
     display: inline-block;
     margin-bottom: -5px;
+    max-width: max-content;
   }
   
   form label {
     width: 200px;
     text-align: left;
     margin-right: 30px;
+  }
+
+  form input[type="radio"] {
+    min-width: 15px;
   }
   
