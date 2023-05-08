@@ -20,7 +20,7 @@
       <label for="tags" class="form-label">Tags</label>
       <input type="text" class="form-control" id="tags" name="tags" placeholder="Type tags separated by commas">
     </div>
-    
+
 
     <div class="mb-3">
       <label for="imageUpload" class="form-label">Upload Image</label>
@@ -44,6 +44,43 @@
         <span id="radius-value">500</span> meters
       </div>
     </div>
+
+    <label for="time_option">Time Option:</label>
+    <select name="time_option" id="time_option">
+      <option value="">Select a time option</option>
+      <option value="exact_date">Exact Date</option>
+      <option value="season">Season with Year</option>
+      <option value="interval">Time Interval</option>
+    </select>
+
+    <div id="exact_date_div" style="display: none;">
+      <label for="exact_date">Exact Date:</label>
+      <input type="date" name="exact_date" id="exact_date">
+    </div>
+
+    <div id="season_div" style="display: none;">
+      <label for="season">Season:</label>
+      <select name="season" id="season">
+        <select name="season" id="season">
+          <option value="">Select a season</option>
+          <option value="W">Winter</option>
+          <option value="S">Spring</option>
+          <option value="U">Summer</option>
+          <option value="F">Fall</option>
+        </select>
+      </select>
+      <label for="year">Year:</label>
+      <input type="number" name="year" id="year" min="1900" max="2099" step="1" value="2023" />
+    </div>
+
+    <div id="interval_div" style="display: none;">
+      <label for="start_date">Start Date:</label>
+      <input type="date" name="start_date" id="start_date">
+
+      <label for="end_date">End Date:</label>
+      <input type="date" name="end_date" id="end_date">
+    </div>
+
 
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
@@ -171,6 +208,15 @@
       event.preventDefault();
     }
   }
+
+  // Time selection handling
+  document.getElementById('time_option').addEventListener('change', function () {
+    var timeOption = this.value;
+
+    document.getElementById('exact_date_div').style.display = (timeOption === 'exact_date') ? 'block' : 'none';
+    document.getElementById('season_div').style.display = (timeOption === 'season') ? 'block' : 'none';
+    document.getElementById('interval_div').style.display = (timeOption === 'interval') ? 'block' : 'none';
+  });
 
 
 </script>

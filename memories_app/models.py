@@ -77,10 +77,12 @@ class Date(models.Model):
         ('F', 'Fall'),
     ]
 
+    exact_date = models.DateField(null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
-    end_date  = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     season = models.CharField(max_length=1, choices=season_choices, null=True, blank=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
+
 
 class StoryPhoto(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='photos')
