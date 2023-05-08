@@ -48,9 +48,9 @@
 
       <!-- Time Options-->
 
-      <div class=" p-2"  id="time_options">
-        <label class="row mb-3" for="time_option">Time Option:</label>
-        <select name="time_option" id="time_option">
+      <div class=" p-2"  id="date_options">
+        <label class="row mb-3" for="date_option">Time Option:</label>
+        <select name="date_option" id="date_option">
           <option value="">Select a time option</option>
           <option value="exact_date">Exact Date</option>
           <option value="season">Season with Year</option>
@@ -227,7 +227,7 @@
   }
 
   // Time selection handling
-  document.getElementById('time_option').addEventListener('change', function () {
+  document.getElementById('date_option').addEventListener('change', function () {
     var timeOption = this.value;
 
     document.getElementById('exact_date_div').style.display = (timeOption === 'exact_date') ? 'block' : 'none';
@@ -239,7 +239,7 @@
     // Initialize the datepickers
     $(function() {
     $('.datepicker').datepicker({
-      format: 'yyyy-mm-dd',
+      format: 'dd-mm-yyyy',
       autoclose: true,
       startDate: '1800-01-01',
       endDate: new Date(),
