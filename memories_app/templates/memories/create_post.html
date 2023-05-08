@@ -216,7 +216,6 @@
   const form = document.querySelector('#mainform');
   form.addEventListener('submit', handleSubmit);
   function handleSubmit() {
-    console.log("entry")
     // Check if the location field is empty
     const locationField = document.getElementById('location-name');
     const locationPoint = document.getElementById('location-point');
@@ -242,7 +241,13 @@
     $('.datepicker').datepicker({
       format: 'yyyy-mm-dd',
       autoclose: true,
-      
+      startDate: '1800-01-01',
+      endDate: new Date(),
+      beforeShowDay: function(date) {
+        var minDate = new Date('1800-01-01');
+        var maxDate = new Date();
+        return date.valueOf() < minDate.valueOf() || date.valueOf() > maxDate.valueOf() ? 'disabled' : '';
+      }
     });
   });
 
