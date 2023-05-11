@@ -94,6 +94,9 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': os.environ.get('DB_HOST', 'host.docker.internal'),
         'PORT': os.environ.get('DB_PORT', '3306'),
+        'OPTIONS': {
+            'ssl': {'ca':'memories/DigiCertGlobalRootCA.crt.pem'},
+        }
     }
 }
 
