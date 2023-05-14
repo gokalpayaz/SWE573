@@ -139,3 +139,4 @@ GitHub.sublime-settings
 images/
 GDAL-3.4.3-cp39-cp39-win_amd64.whl
 .env.prod
+DigiCertGlobalRootCA.crt.pem
