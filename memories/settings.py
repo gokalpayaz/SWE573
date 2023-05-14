@@ -33,8 +33,8 @@ SECRET_KEY = 'django-insecure-8^6r=s^92r2prn(64^(aa#_!2q_kbacb0+7hcbtf_5gvcxxv8x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]','memories573.azurewebsites.net']
+CSRF_TRUSTED_ORIGINS = ['https://memories573.azurewebsites.net']
 
 # Application definition
 
@@ -92,11 +92,13 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME'),
         'USER': os.environ.get('DB_USER'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
+        'OPTIONS': {
+            'ssl': {'ca':'memories/DigiCertGlobalRootCA.crt.pem'},
+        }
     }
 }
-
 
 
 # Password validation
