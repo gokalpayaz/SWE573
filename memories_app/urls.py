@@ -23,6 +23,7 @@ urlpatterns = [
     path('profile/', user_views.profile, name='profile'),
     path('profile/update_profile', user_views.update_profile, name='update_profile'),
     path('create_post/', story_views.create_post, name='create_post'),
+    path('search_post/', story_views.search_post, name='search_post'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -91,6 +91,7 @@ def create_post(request):
 
         return render(request, 'memories/create_post.html')
     
+def search_post(request):
 
 
 def get_season(date):
