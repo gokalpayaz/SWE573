@@ -31,42 +31,69 @@
     </div>
 
     <!-- Display likes and comments -->
-    <h4>Likes:</h4>
-    <p>{{ story.like_set.count }}</p>
-    <h4>Comments:</h4>
-    <p>{{ story.comments_set.count }}</p>
+    <div class="d-flex align-items-center">
+      <span class="mr-2"><i class="far fa-comment"></i> {{ story.comments_set.count }}</span>
+      <span><i class="far fa-heart" id="like-icon" data-story-id="{{ story.id }}"></i> <span
+          id="like-count">{{story.like_set.count }}</span></span>
+    </div>
   </div>
-</div>
 
 
 
-<script>
-  window.addEventListener('DOMContentLoaded', function () {
-    function initMap() {
-      var latitude = '{{ location.point.x }}';
-      var longitude = '{{ location.point.y }}';
-      var map = L.map('map', {
-        center: [latitude,longitude],
-        zoom: 13,
-      });
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      function initMap() {
+        var latitude = '{{ location.point.x }}';
+        var longitude = '{{ location.point.y }}';
+        var map = L.map('map', {
+          center: [latitude, longitude],
+          zoom: 13,
+        });
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
 
-      var geocoder = L.Control.Geocoder.nominatim();
-      var control = L.Control.geocoder({
-        geocoder: geocoder,
-        defaultMarkGeocode: false,
-      }).addTo(map);
+        var geocoder = L.Control.Geocoder.nominatim();
+        var control = L.Control.geocoder({
+          geocoder: geocoder,
+          defaultMarkGeocode: false,
+        }).addTo(map);
 
-      L.marker([latitude, longitude]).addTo(map);
+        L.marker([latitude, longitude]).addTo(map);
 
-    }
-    initMap();
+      }
+      initMap();
 
-  });
-</script>
+    });
+
+    
+    // Attach click event listener to the like icon
+    document.getElementById('like-icon').addEventListener('click', function () {
+      var storyId = this.getAttribute('data-story-id');
+      var likeCountElement = document.getElementById('like-count');
+
+      // Send AJAX request to like the story
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/like-story/');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          var response = JSON.parse(xhr.responseText);
+          // Update the like count
+          likeCountElement.textContent = response.like_count;
+        } else {
+          console.log('An error occurred');
+        }
+      };
+
+      // Set the request body with the story ID
+      var data = JSON.stringify({ story_id: storyId });
+      xhr.send(data);
+    });
 
 
-{% endblock %}
+  </script>
+
+
+  {% endblock %}

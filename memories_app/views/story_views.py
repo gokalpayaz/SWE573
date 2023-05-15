@@ -12,13 +12,14 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
-from ..models import Tags, Story, Location, StoryPhoto, Date
+from ..models import Tags, Story, Location, StoryPhoto, Date, Like
 from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
 from django.db.models import Q, Count
 from django.contrib.gis.geos import fromstr
 from django.contrib.gis.db.models.functions import Distance
+import json
 date_format = '%Y-%m-%d'
 
 @login_required(login_url='login')
@@ -165,6 +166,29 @@ def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id)
     location = get_object_or_404(Location, id=story_id)
     return render(request, 'memories/story_detail.html', {'story': story,'location':location})
+
+
+# Ajax (Asynchronous JavaScript and XML) is a technique used in web development to send and receive data
+#  from a server asynchronously without requiring a full page reload. It allows you to update specific 
+# parts of a web page dynamically without disrupting the user experience.
+@csrf_exempt
+@login_required(login_url='login')
+def like_story(request):
+    if request.method == 'POST':
+        body = request.body.decode('utf-8')
+        data = json.loads(body)
+        story_id = data['story_id']
+        story = Story.objects.get(pk=story_id)
+        
+        # Perform the like action (e.g., create a Like object)
+        like = Like.objects.get_or_create(story=story, user=request.user)
+        
+        # Return the updated like count
+        like_count = story.like_set.count()
+        return JsonResponse({'like_count': like_count})
+    else:
+        return JsonResponse({'error': 'Invalid request'})
+
 
 @login_required(login_url='login')
 def get_season(date):
