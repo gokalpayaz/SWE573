@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5" id="search_form_container" style="display:none;">
+    <h2>Seach for blog posts</h2>
+    <form method="post" id="mainform" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-elements">
+            <div class="mb-3">
+                <label for="username" class="form-label">User name</label>
+                <input type="text" class="form-control" id="username" name="username">
+            </div>
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title">
+            </div>
+
+            <div class="mb-3">
+                <label for="tags" class="form-label">Tags</label>
+                <input type="text" class="form-control" id="tags" name="tags"
+                    placeholder="Type tags separated by commas" style="min-width: auto;">
+            </div>
+
+            <!-- Map Section -->
+            <div class="mb-3">
+                <label for="location" class="form-label">Select Location:</label>
+                <div id="map" style="width: 100%; height: 300px"></div>
+                <input type="hidden" id="location-name" name="location-name">
+                <input type="hidden" id="location-point" name="location-point">
+            </div>
+
+            <!-- Search bar and Radius Section -->
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="radius" class="form-label">Radius (meters):</label>
+                    <input type="range" class="form-range" id="radius" name="radius" min="100" max="1000" step="100"
+                        value="500">
+                    <span id="radius-value">500</span> meters
+                </div>
+            </div>
+
+            <!-- Time Options-->
+
+            <div class=" p-2" id="date_options">
+                <label class="row mb-3" for="date_option">Time Option:</label>
+                <select name="date_option" id="date_option">
+                    <option value="">Select a time option</option>
+                    <option value="exact_date">Exact Date</option>
+                    <option value="season">Season with Year</option>
+                    <option value="interval">Time Interval</option>
+                </select>
+
+                <div id="exact_date_div" class="mt-2" style="display: none;">
+                    <label for="exact_date">Exact Date:</label>
+                    <input type="date" name="exact_date" id="exact_date" class="form-control datepicker">
+                </div>
+
+                <div class="mb-3" id="season_div" style="display: none;">
+                    <div>
+                        <label class="mb-2 mt-2" for="season">Season:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="season" id="winter" value="W">
+                            <label class="form-check-label" for="winter">Winter</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="season" id="spring" value="S">
+                            <label class="form-check-label" for="spring">Spring</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="season" id="summer" value="U">
+                            <label class="form-check-label" for="summer">Summer</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="season" id="fall" value="F">
+                            <label class="form-check-label" for="fall">Fall</label>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label for="year" style="margin-bottom: 10px;">Year:</label>
+                        <input type="number" name="year" id="year" class="form-control" min="1800" max="2099" step="1"
+                            value="2023" />
+                    </div>
+                </div>
+                <div class="mt-2" id="interval_div" style="display: none;">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control datepicker mb-2">
+
+                    <label for="end_date">End Date:</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control datepicker">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class=" mb-5 btn btn-primary" style="margin-top: 20px;">Search</button>
+    </form>
+</div>
+<button type="button" class=" mb-5 btn btn-primary" id="toggle_search_form">Toggle Search</button>
+
+
+
+{% if story_list %}
+    <div id="results">
+        {% for story in story_list %}
+            {% include "memories/story_list.html" with stories=search_results %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div id="results" style="display: none;">
+    <!-- The div is hidden when there are no stories -->
+    </div>
+{% endif %}
+
+<script>
+
+    // Search section toggle
+    document.getElementById("toggle_search_form").addEventListener("click", function () {
+        var searchFormContainer = document.getElementById("search_form_container");
+        var displaySetting = searchFormContainer.style.display;
+
+        if (displaySetting == 'block') {
+            // Search form is visible. Hide it.
+            searchFormContainer.style.display = 'none';
+        } else {
+            // Search form is hidden. Show it.
+            searchFormContainer.style.display = 'block';
+        }
+    });
+
+    window.addEventListener('DOMContentLoaded', function () {
+        function initMap() {
+            var map = L.map('map', {
+                center: [51.505, -0.09],
+                zoom: 13,
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+
+            var geocoder = L.Control.Geocoder.nominatim();
+            var control = L.Control.geocoder({
+                geocoder: geocoder,
+                defaultMarkGeocode: false,
+            }).addTo(map);
+
+            control.on('markgeocode', function (e) {
+                map.setView(e.geocode.center, 16);
+                // Your code to set the default radius when a location is found
+
+                // Set the location name field value
+                document.getElementById('location-name').value = e.geocode.name;
+
+                // Set the location point field value
+                document.getElementById('location-point').value = e.geocode.center.lat + ',' + e.geocode.center.lng;
+            });
+
+            // Declare a variable to store the marker
+            let marker;
+            let locationName;
+            let locationPoint;
+
+            // Add a click event listener to the map
+            map.on('click', function (event) {
+                const clickedLocation = event.latlng;
+
+                // Remove the previous marker if it exists
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+
+                // Add a new marker to the clicked location
+                marker = L.marker(clickedLocation).addTo(map);
+
+                // Update the location information
+                locationName = '';
+                locationPoint = clickedLocation;
+
+                // Update the map view
+                map.setView(clickedLocation, map.getZoom());
+                // console.log(clickedLocation.lat+ ',' +clickedLocation.lng)
+                // Set the value of the location input element
+                document.getElementById('location-point').value = clickedLocation.lat + ',' + clickedLocation.lng;
+                console.log(document.getElementById('location-point').value)
+
+                // Use the geocoder to get the location name
+                geocoder.reverse(clickedLocation, map.getZoom(), function (results) {
+                    const location = results[0];
+                    locationName = location.name;
+                    document.getElementById('location-name').value = locationName;
+                    console.log(locationName);
+                })
+            });
+        }
+
+        initMap();
+
+
+        // Update radius value display and input element value
+        var radiusSlider = document.getElementById('radius');
+        var radiusValue = document.getElementById('radius-value');
+        radiusSlider.addEventListener('input', function () {
+            radiusValue.textContent = radiusSlider.value;
+            radiusSlider.setAttribute('value', radiusSlider.value);
+        });
+    });
+
+    // Time selection handling
+    document.getElementById('date_option').addEventListener('change', function () {
+        var timeOption = this.value;
+
+        document.getElementById('exact_date_div').style.display = (timeOption === 'exact_date') ? 'block' : 'none';
+        document.getElementById('season_div').style.display = (timeOption === 'season') ? 'block' : 'none';
+        document.getElementById('interval_div').style.display = (timeOption === 'interval') ? 'block' : 'none';
+    });
+
+    // DatePicker handling
+    // Initialize the datepickers
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'dd-mm-yyyy',
+            autoclose: true,
+            startDate: '1800-01-01',
+            endDate: new Date(),
+            beforeShowDay: function (date) {
+                var minDate = new Date('1800-01-01');
+                var maxDate = new Date();
+                return date.valueOf() < minDate.valueOf() || date.valueOf() > maxDate.valueOf() ? 'disabled' : '';
+            }
+        });
+    });
+
+
+
+</script>
+{% endblock %}

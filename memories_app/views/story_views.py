@@ -16,7 +16,9 @@ from ..models import Tags, Story, Location, StoryPhoto, Date
 from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
-
+from django.db.models import Q
+from django.contrib.gis.geos import fromstr
+from django.contrib.gis.db.models.functions import Distance
 date_format = '%Y-%m-%d'
 
 def create_post(request):
@@ -72,10 +74,6 @@ def create_post(request):
         date.story = story
         date.save()
 
-
-
-
-
         for image in images:
             story_photo = StoryPhoto(story=story, photo=image)
             story_photo.save()
@@ -91,6 +89,69 @@ def create_post(request):
 
         return render(request, 'memories/create_post.html')
     
+def search_post(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        title = request.POST['title']
+        tags = request.POST.get('tags').split(',')
+        location_name = request.POST['location-name']
+        point = request.POST['location-point']
+        radius = request.POST['radius']
+        date_option = request.POST['date_option']
+
+        # Get search inputs
+        filters = []
+        if username != '':
+            filters.append(Q(user__username__icontains=username))
+        if title != '':
+            filters.append(Q(title__icontains=title))
+        if tags:
+            tags_query = Q()
+            for tag in tags:
+                tags_query |= Q(tags__tag__icontains=tag)
+            filters.append(tags_query)
+        if location_name:
+            long = float(point.split(',')[0])
+            lat = float(point.split(',')[1])
+            selected_location = fromstr(f'POINT({long} {lat})', srid=4326)
+            location_ids = Location.objects.annotate(distance=Distance('point', selected_location)).filter(Q(distance__lte=radius) | Q(name__icontains=location_name)).values_list('id', flat=True)
+            location_query = Q(location__in=location_ids)  # using location instead of location_id
+            filters.append(location_query)
+
+        if date_option != '':
+            if date_option == "exact_date":
+                exact_date_str = request.POST['exact_date']
+                exact_date = datetime.strptime(exact_date_str, '%Y-%m-%d').date()
+                date_query = Q(date__start_date__lte=exact_date, date__end_date__gte=exact_date)
+                filters.append(date_query)
+
+            elif date_option == "interval":
+                start_date_str = request.POST['start_date']
+                end_date_str = request.POST['end_date']
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                date_query = Q(date__start_date__lte=end_date, date__end_date__gte=start_date)
+                filters.append(date_query)
+
+            else:  # date_option == "season"
+                year = request.POST.get('year', None)
+                season = request.POST.get('season', None)
+                year_query = Q(date__year=year) if year else Q()
+                season_query = Q(date__season=season) if season else Q()
+                date_query = year_query & season_query
+                filters.append(date_query)
+
+
+        if len(filters)==0:
+            return render(request, 'memories/search_post.html')
+        else:
+            result = Story.objects.filter(*filters).distinct()
+            return render(request, 'memories/search_post.html', {'story_list': result})
+
+
+        
+    else:
+        return render(request, 'memories/search_post.html')
 
 
 def get_season(date):

@@ -1,0 +1,33 @@
+<head>
+    <script src="https://kit.fontawesome.com/f2a16d139d.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="card mb-3">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                {% if story.user.photo %}
+                    <img src="{{ story.user.photo.url }}" class="img-fluid m-3 rounded-circle" alt="User photo">
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ story.user.username }}</h6>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ story.title }}</h5>
+                    <p class="card-text">{{ story.text|truncatechars:50 }}</p>
+                    {% if story.photos.first %}
+                        <img src="{{ story.photos.first.photo.url }}" alt="Story photo" class="img-fluid" style="width: 200px;">
+                    {% endif %}
+                    <p class="card-text"><small class="text-muted">{% if story.location_set.first %}{{ story.location_set.first.name }}{% endif %}</small></p>
+                    <p class="card-text"><small class="text-muted">{% if story.date_set.first %}{{ story.date_set.first.start_date }}{% endif %}</small></p>
+                    <div class="d-flex align-items-center">
+                        <span class="mr-2"><i class="far fa-comment"></i> {{ story.comments_set.count }}</span>
+                        <span><i class="far fa-heart"></i> {{ story.like_set.count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
