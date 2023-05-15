@@ -158,7 +158,7 @@ def search_post(request):
 @login_required(login_url='login')
 def landing_page(request):
     stories = Story.objects.annotate(like_count=Count('like')).order_by('-like_count')[:5]
-    return render(request, 'memories/search_post.html', {'story_list': stories})
+    return render(request, 'memories/landing_page.html', {'story_list': stories})
 
 @login_required(login_url='login')
 def get_season(date):
