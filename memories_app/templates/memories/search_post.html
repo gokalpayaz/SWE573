@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5" id="search_form_container" style="display:none;">
+<div class="container mt-5" id="search_form_container" style="display:block;">
     <h2>Seach for blog posts</h2>
     <form method="post" id="mainform" enctype="multipart/form-data">
         {% csrf_token %}
