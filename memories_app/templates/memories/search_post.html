@@ -188,34 +188,6 @@
         });
     });
 
-    // Listen for changes on the file input
-    document.getElementById('imageUpload').addEventListener('change', function (event) {
-        var imagePreviewContainer = document.getElementById('imagePreviewContainer');
-        var files = event.target.files;
-
-        // Remove previous image previews
-        imagePreviewContainer.innerHTML = '';
-
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = (function (fileIndex) {
-                    return function (e) {
-                        var imagePreview = document.createElement('img');
-                        imagePreview.src = e.target.result;
-                        imagePreview.alt = 'Image Preview';
-                        imagePreview.className = 'img-fluid col-md-4 mt-3';
-
-                        imagePreviewContainer.appendChild(imagePreview);
-                    };
-                })(i);
-                reader.readAsDataURL(file);
-            }
-        }
-    });
-
     // Check if user has selected a location by any means.
     // If not, alert user and avoid posting.
     const form = document.querySelector('#mainform');
