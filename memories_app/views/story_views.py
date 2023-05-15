@@ -91,6 +91,7 @@ def create_post(request):
     
 def search_post(request):
     if request.method == 'POST':
+        username = request.POST['username']
         title = request.POST['title']
         tags = request.POST.get('tags').split(',')
         location_name = request.POST['location-name']
@@ -100,6 +101,8 @@ def search_post(request):
 
         # Get search inputs
         filters = []
+        if username != '':
+            filters.append(Q(user__username__icontains=username))
         if title != '':
             filters.append(Q(title__icontains=title))
         if tags:
