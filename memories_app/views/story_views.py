@@ -115,7 +115,36 @@ def search_post(request):
             location_query = Q(location__in=location_ids)  # using location instead of location_id
             filters.append(location_query)
 
+        if date_option != '':
+            if date_option == "exact_date":
+                exact_date_str = request.POST['exact_date']
+                exact_date = datetime.strptime(exact_date_str, '%Y-%m-%d').date()
+                date_query = Q(date__start_date__lte=exact_date, date__end_date__gte=exact_date)
+                filters.append(date_query)
+
+            elif date_option == "interval":
+                start_date_str = request.POST['start_date']
+                end_date_str = request.POST['end_date']
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                date_query = Q(date__start_date__lte=end_date, date__end_date__gte=start_date)
+                filters.append(date_query)
+
+            else:  # date_option == "season"
+                year = request.POST.get('year', None)
+                season = request.POST.get('season', None)
+                year_query = Q(date__year=year) if year else Q()
+                season_query = Q(date__season=season) if season else Q()
+                date_query = year_query & season_query
+                filters.append(date_query)
+
+
+        if len(filters)==0:
+            return render(request, 'memories/search_post.html')
+
+
         result = Story.objects.filter(*filters).distinct()
+        pass
         
     else:
         return render(request, 'memories/search_post.html')
