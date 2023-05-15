@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-5" id="search_form_container" style="display:none;">
-    <h2>Create a new blog post</h2>
+    <h2>Seach for blog posts</h2>
     <form method="post" id="mainform" enctype="multipart/form-data">
         {% csrf_token %}
 
@@ -187,21 +187,6 @@
             radiusSlider.setAttribute('value', radiusSlider.value);
         });
     });
-
-    // Check if user has selected a location by any means.
-    // If not, alert user and avoid posting.
-    const form = document.querySelector('#mainform');
-    form.addEventListener('submit', handleSubmit);
-    function handleSubmit() {
-        // Check if the location field is empty
-        const locationField = document.getElementById('location-name');
-        const locationPoint = document.getElementById('location-point');
-
-        if (!locationField.value | !locationPoint.value) {
-            alert('Please select a location');
-            event.preventDefault();
-        }
-    }
 
     // Time selection handling
     document.getElementById('date_option').addEventListener('change', function () {
