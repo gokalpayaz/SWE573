@@ -48,7 +48,7 @@ def login_user(request):
         messages.error(request, response['message'])
         return redirect("/")
     
-@login_required(login_url='login_user')
+@login_required(login_url='login')
 @api_view(['GET'])
 def logout_user(request):
     if request.user != None:
@@ -65,7 +65,7 @@ def reset_password(request):
         messages.error(request, response['message'])
         return redirect("/")
     
-@login_required(login_url='login_user')
+@login_required(login_url='login')
 @api_view(['GET'])
 def profile(request):
     response = user_controller.render_profile(request)
@@ -76,7 +76,7 @@ def profile(request):
         return redirect("/")
 
 
-@login_required(login_url='login_user')
+@login_required(login_url='login')
 @api_view(['POST'])
 def update_profile(request):
     response = user_controller.update_profile(request)

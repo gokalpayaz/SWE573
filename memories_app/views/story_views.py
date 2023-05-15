@@ -21,6 +21,7 @@ from django.contrib.gis.geos import fromstr
 from django.contrib.gis.db.models.functions import Distance
 date_format = '%Y-%m-%d'
 
+@login_required(login_url='login')
 def create_post(request):
     # If user is submitting, request method will be post, if user is launching the page it will be get
     if request.method == 'POST':
@@ -88,7 +89,8 @@ def create_post(request):
     else:
 
         return render(request, 'memories/create_post.html')
-    
+   
+@login_required(login_url='login')
 def search_post(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -153,10 +155,12 @@ def search_post(request):
     else:
         return render(request, 'memories/search_post.html')
 
+@login_required(login_url='login')
 def landing_page(request):
     stories = Story.objects.annotate(like_count=Count('like')).order_by('-like_count')[:5]
     return render(request, 'memories/search_post.html', {'story_list': stories})
 
+@login_required(login_url='login')
 def get_season(date):
     if date.month == 12 or date.month < 3:
         return 'W'
