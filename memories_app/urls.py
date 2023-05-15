@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls.static import static 
 from django.conf import settings
-from .views import user_views, story_views
+from .views import base_views, user_views, story_views
 from django.views.generic import TemplateView
 
 
@@ -12,6 +12,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     # path('users/create', user_views.create_user),
+    path('',base_views.base_view, name='base'),
     path('login', TemplateView.as_view(template_name='memories/login.html'), name='login'),
     path('users/', user_views.get_all_users, name='users'),
     path('signup/', TemplateView.as_view(template_name='memories/signup.html'), name='signup'),
