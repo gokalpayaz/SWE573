@@ -26,6 +26,9 @@ urlpatterns = [
     path('create_post/', story_views.create_post, name='create_post'),
     path('search_post/', story_views.search_post, name='search_post'),
     path('landing_page/', story_views.landing_page, name='landing_page'),
+    path('story/<int:story_id>/', story_views.story_detail, name='story_detail'),
+    path('like_story/',story_views.like_story, name='like_story'),
+    path('submit_comment/',story_views.submit_comment, name='submit_comment'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
