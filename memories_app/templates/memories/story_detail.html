@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h2>{{ story.title }}</h2>
+    <p>{{ story.text }}</p>
+    <p>Published on: {{ story.publish_date }}</p>
+
+    <!-- Display tags -->
+    <h4>Tags:</h4>
+    <ul>
+      {% for tag in story.tags_set.all %}
+      <li>{{ tag.tag }}</li>
+      {% endfor %}
+    </ul>
+
+    <!-- Display location -->
+    <div class="mb-3">
+      <h4>Location:</h4>
+      <div id="map" style="width: 100%; height: 300px"></div>
+      <p>{{ location.name }}</p>
+    </div>
+
+    <!-- Display photos -->
+    <h4>Photos:</h4>
+    <div>
+      {% for photo in story.photos.all %}
+      <img src="{{ photo.photo.url }}" alt="Story Photo" style="width: 300px;">
+      {% endfor %}
+    </div>
+
+    <!-- Display likes and comments -->
+    <h4>Likes:</h4>
+    <p>{{ story.like_set.count }}</p>
+    <h4>Comments:</h4>
+    <p>{{ story.comments_set.count }}</p>
+  </div>
+</div>
+
+
+
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    function initMap() {
+      var latitude = '{{ location.point.x }}';
+      var longitude = '{{ location.point.y }}';
+      var map = L.map('map', {
+        center: [latitude,longitude],
+        zoom: 13,
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      var geocoder = L.Control.Geocoder.nominatim();
+      var control = L.Control.geocoder({
+        geocoder: geocoder,
+        defaultMarkGeocode: false,
+      }).addTo(map);
+
+      L.marker([latitude, longitude]).addTo(map);
+
+    }
+    initMap();
+
+  });
+</script>
+
+
+{% endblock %}
