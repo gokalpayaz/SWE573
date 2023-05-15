@@ -16,7 +16,7 @@ from ..models import Tags, Story, Location, StoryPhoto, Date
 from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.contrib.gis.geos import fromstr
 from django.contrib.gis.db.models.functions import Distance
 date_format = '%Y-%m-%d'
@@ -153,6 +153,9 @@ def search_post(request):
     else:
         return render(request, 'memories/search_post.html')
 
+def landing_page(request):
+    stories = Story.objects.annotate(like_count=Count('like')).order_by('-like_count')[:5]
+    return render(request, 'memories/search_post.html', {'story_list': stories})
 
 def get_season(date):
     if date.month == 12 or date.month < 3:
