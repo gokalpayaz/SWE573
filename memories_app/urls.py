@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls.static import static 
 from django.conf import settings
-from .views import user_views, story_views
+from .views import base_views, user_views, story_views
 from django.views.generic import TemplateView
 
 
@@ -12,8 +12,9 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     # path('users/create', user_views.create_user),
-    path('', TemplateView.as_view(template_name='memories/landing.html'), name='landing'),
-    path('users/', user_views.get_all_users, name='users'),
+    path('',base_views.base_view, name='base'),
+    path('login', TemplateView.as_view(template_name='memories/login.html'), name='login'),
+    # path('users/', user_views.get_all_users, name='users'),
     path('signup/', TemplateView.as_view(template_name='memories/signup.html'), name='signup'),
     path('create_user/', user_views.create_user, name='create_user'),
     path('login_user/', user_views.login_user, name='login_user'),
@@ -24,6 +25,7 @@ urlpatterns = [
     path('profile/update_profile', user_views.update_profile, name='update_profile'),
     path('create_post/', story_views.create_post, name='create_post'),
     path('search_post/', story_views.search_post, name='search_post'),
+    path('landing_page/', story_views.landing_page, name='landing_page'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
