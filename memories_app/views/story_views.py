@@ -144,10 +144,11 @@ def search_post(request):
 
         if len(filters)==0:
             return render(request, 'memories/search_post.html')
+        else:
+            result = Story.objects.filter(*filters).distinct()
+            return render(request, 'memories/search_post.html', {'story_list': result})
 
 
-        result = Story.objects.filter(*filters).distinct()
-        pass
         
     else:
         return render(request, 'memories/search_post.html')

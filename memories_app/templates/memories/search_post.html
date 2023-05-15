@@ -98,6 +98,18 @@
 
 
 
+{% if story_list %}
+    <div id="results">
+        {% for story in story_list %}
+            {% include "memories/story_list.html" with stories=search_results %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div id="results" style="display: none;">
+    <!-- The div is hidden when there are no stories -->
+    </div>
+{% endif %}
+
 <script>
 
     // Search section toggle
