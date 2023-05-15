@@ -12,7 +12,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
-from ..models import Tags, Story, Location, StoryPhoto, Date, Like
+from ..models import Tags, Story, Location, StoryPhoto, Date, Like, Comments
 from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
@@ -189,7 +189,26 @@ def like_story(request):
     else:
         return JsonResponse({'error': 'Invalid request'})
 
-
+@csrf_exempt
+@login_required(login_url='login')
+def submit_comment(request):
+    if request.method == 'POST':
+        body = request.body.decode('utf-8')
+        data = json.loads(body)
+        story_id = data['story_id']
+        comment_text = data['comment']
+        story = Story.objects.get(pk=story_id)
+        
+        # Perform the like action (e.g., create a Like object)
+        comment = Comments.objects.get_or_create(story=story, user=request.user, text=comment_text)
+        
+        # Return the updated like count
+        comments_count = story.comments_set.count()
+        return JsonResponse({'comments_count': comments_count,
+                             'comment_text':comment_text,
+                             'comment_owner':request.user.username})
+    else:
+        return JsonResponse({'error': 'Invalid request'})
 @login_required(login_url='login')
 def get_season(date):
     if date.month == 12 or date.month < 3:

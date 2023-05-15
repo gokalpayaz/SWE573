@@ -32,27 +32,40 @@
 
     <!-- Display likes and comments -->
     <div class="d-flex align-items-center mt-3">
-      <span class="mr-2"><i class="far fa-comment" id="comment-logo"></i> {{ story.comments_set.count }}</span>
+      <span class="mr-2"><i class="far fa-comment" id="comment-logo"></i>
+        <span id="comment-count">{{story.comments_set.count }}</span></span>
       <span><i class="far fa-heart" id="like-icon" data-story-id="{{ story.id }}"></i> <span
           id="like-count">{{story.like_set.count }}</span></span>
     </div>
 
-    <!-- Display comments -->
-    <div class="mt-2">
-      <h4>Comments</h4>
-      <ul id="comment-list">
-        {% for comment in story.comments_set.all %}
-        <li>{{ comment.text }}</li>
-        {% endfor %}
-      </ul>
+<!-- Display comments -->
+<div class="mt-2" id="comments-display-section" style="width: fit-content; display: none;">
+  <div class="card">
+    <div class="list-group list-group-flush" id="comment-list">
+      {% for comment in story.comments_set.all %}
+      <div class="card mb-2">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <span class="card-title" >{{ comment.user.username }}</span>
+            <span class="text-title">{{ comment.created_date }}</span>
+          </div>
+          <p class="card-text">{{ comment.text }}</p>
+        </div>
+      </div>
+      {% endfor %}
     </div>
+  </div>
+</div>
+
+
 
     <!-- Add comment -->
-    <div class="mb-3" id="add-comment-section" style="display: none;">
+    <div class="mt-3" id="add-comment-section" style="display: none;">
       <div class="form-elements">
-        <textarea class="form-control" id="comment" name="text" rows="5" required></textarea>
+        <label for="comment" class="form-label">Add New</label>
+        <textarea class="form-control" id="comment" name="comment" rows="5" required></textarea>
       </div>
-      <button type="Add" class=" mb-5 btn btn-primary" style="margin-top: 20px;">Add</button>
+      <button type="Add" id="comment-submit" class=" mb-5 btn btn-primary" style="margin-top: 20px;">Add</button>
     </div>
 
 
@@ -112,16 +125,61 @@
       // Attach click event listener to the comment icon
       document.getElementById('comment-logo').addEventListener('click', function () {
         document.getElementById('add-comment-section').style.display = 'block'
+        document.getElementById('comments-display-section').style.display = 'block'
       });
-
 
       // Comment submission
-      $(document).on('click', '#comment-submit', function () {
-        var commentText = $('#comment-input').val();
+      document.getElementById('comment-submit').addEventListener('click', function () {
+        var commentText = document.getElementById('comment').value;
+        var storyId = '{{ story.id }}';
+        var commentCountElement = document.getElementById('comment-count');
+        var commentListElement = document.getElementById('comment-list');
 
-        // Make Ajax request and handle response
-        // ...
+        // Make AJAX request to submit the comment
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/submit_comment/');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            // Handle success response
+            var response = JSON.parse(xhr.responseText);
+
+            // Create a new comment card
+            var commentCard = document.createElement('div');
+            commentCard.classList.add('card', 'mb-2');
+            var cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+            var commentOwner = document.createElement('p');
+            commentOwner.classList.add('card-title');
+            commentOwner.textContent = response.comment_owner;
+            var commentTextElement = document.createElement('p');
+            commentTextElement.classList.add('card-text');
+            commentTextElement.textContent = commentText;
+
+            // Append elements to the comment card
+            cardBody.appendChild(commentOwner);
+            cardBody.appendChild(commentTextElement);
+            commentCard.appendChild(cardBody);
+
+            // Append the comment card to the comment list
+            commentListElement.appendChild(commentCard);
+
+            // Update the comment count
+            commentCountElement.textContent = response.comments_count;
+
+            // Clear the comment input
+            document.getElementById('comment').value = '';
+
+          } else {
+            console.error('An error occurred');
+          }
+        };
+
+        // Set the request body with the comment text and story ID
+        var data = JSON.stringify({ comment: commentText, story_id: storyId });
+        xhr.send(data);
       });
+
 
     </script>
 

@@ -28,6 +28,7 @@ urlpatterns = [
     path('landing_page/', story_views.landing_page, name='landing_page'),
     path('story/<int:story_id>/', story_views.story_detail, name='story_detail'),
     path('like_story/',story_views.like_story, name='like_story'),
+    path('submit_comment/',story_views.submit_comment, name='submit_comment'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
