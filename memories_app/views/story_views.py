@@ -4,7 +4,7 @@ from http.client import responses
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.forms import SetPasswordForm
@@ -159,6 +159,12 @@ def search_post(request):
 def landing_page(request):
     stories = Story.objects.annotate(like_count=Count('like')).order_by('-like_count')[:5]
     return render(request, 'memories/search_post.html', {'story_list': stories})
+
+@login_required(login_url='login')
+def story_detail(request, story_id):
+    story = get_object_or_404(Story, id=story_id)
+    location = get_object_or_404(Location, id=story_id)
+    return render(request, 'memories/story_detail.html', {'story': story,'location':location})
 
 @login_required(login_url='login')
 def get_season(date):
