@@ -31,69 +31,99 @@
     </div>
 
     <!-- Display likes and comments -->
-    <div class="d-flex align-items-center">
-      <span class="mr-2"><i class="far fa-comment"></i> {{ story.comments_set.count }}</span>
+    <div class="d-flex align-items-center mt-3">
+      <span class="mr-2"><i class="far fa-comment" id="comment-logo"></i> {{ story.comments_set.count }}</span>
       <span><i class="far fa-heart" id="like-icon" data-story-id="{{ story.id }}"></i> <span
           id="like-count">{{story.like_set.count }}</span></span>
     </div>
-  </div>
+
+    <!-- Display comments -->
+    <div class="mt-2">
+      <h4>Comments</h4>
+      <ul id="comment-list">
+        {% for comment in story.comments_set.all %}
+        <li>{{ comment.text }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Add comment -->
+    <div class="mb-3" id="add-comment-section" style="display: none;">
+      <div class="form-elements">
+        <textarea class="form-control" id="comment" name="text" rows="5" required></textarea>
+      </div>
+      <button type="Add" class=" mb-5 btn btn-primary" style="margin-top: 20px;">Add</button>
+    </div>
 
 
+    <script>
+      window.addEventListener('DOMContentLoaded', function () {
+        function initMap() {
+          var latitude = '{{ location.point.x }}';
+          var longitude = '{{ location.point.y }}';
+          var map = L.map('map', {
+            center: [latitude, longitude],
+            zoom: 13,
+          });
 
-  <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      function initMap() {
-        var latitude = '{{ location.point.x }}';
-        var longitude = '{{ location.point.y }}';
-        var map = L.map('map', {
-          center: [latitude, longitude],
-          zoom: 13,
-        });
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          }).addTo(map);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        }).addTo(map);
+          var geocoder = L.Control.Geocoder.nominatim();
+          var control = L.Control.geocoder({
+            geocoder: geocoder,
+            defaultMarkGeocode: false,
+          }).addTo(map);
 
-        var geocoder = L.Control.Geocoder.nominatim();
-        var control = L.Control.geocoder({
-          geocoder: geocoder,
-          defaultMarkGeocode: false,
-        }).addTo(map);
+          L.marker([latitude, longitude]).addTo(map);
 
-        L.marker([latitude, longitude]).addTo(map);
-
-      }
-      initMap();
-
-    });
-
-    
-    // Attach click event listener to the like icon
-    document.getElementById('like-icon').addEventListener('click', function () {
-      var storyId = this.getAttribute('data-story-id');
-      var likeCountElement = document.getElementById('like-count');
-
-      // Send AJAX request to like the story
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', '/like_story/');
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          var response = JSON.parse(xhr.responseText);
-          // Update the like count
-          likeCountElement.textContent = response.like_count;
-        } else {
-          console.log('An error occurred');
         }
-      };
+        initMap();
 
-      // Set the request body with the story ID
-      var data = JSON.stringify({ story_id: storyId });
-      xhr.send(data);
-    });
+      });
 
 
-  </script>
+      // Attach click event listener to the like icon
+      document.getElementById('like-icon').addEventListener('click', function () {
+        var storyId = this.getAttribute('data-story-id');
+        var likeCountElement = document.getElementById('like-count');
+
+        // Send AJAX request to like the story
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/like_story/');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            // Update the like count
+            likeCountElement.textContent = response.like_count;
+          } else {
+            console.log('An error occurred');
+          }
+        };
+
+        // Set the request body with the story ID
+        var data = JSON.stringify({ story_id: storyId });
+        xhr.send(data);
+      });
 
 
-  {% endblock %}
+      // Attach click event listener to the comment icon
+      document.getElementById('comment-logo').addEventListener('click', function () {
+        document.getElementById('add-comment-section').style.display = 'block'
+      });
+
+
+      // Comment submission
+      $(document).on('click', '#comment-submit', function () {
+        var commentText = $('#comment-input').val();
+
+        // Make Ajax request and handle response
+        // ...
+      });
+
+    </script>
+
+
+    {% endblock %}
