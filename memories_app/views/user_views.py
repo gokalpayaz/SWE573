@@ -33,28 +33,20 @@ def create_user(request):
     response = user_controller.create_user(request)
     if response['success']:
         messages.success(request, response['message'])
-        return redirect(reverse('users'))
+        return redirect("/")
     else:
         messages.error(request, response['message'])
         return redirect(reverse('signup'))
-
-@login_required(login_url='login_user')
-@api_view(['GET'])
-def get_all_users(request):
-    users = user_controller.get_all_users()
-    context = {'users': users}
-    return render(request, 'memories/users.html', context)
-
 
 @csrf_exempt
 @api_view(['POST'])
 def login_user(request):
     response = user_controller.login_user(request)
     if response['success']:
-        return redirect(reverse('users'))
+        return redirect("/")
     else:
         messages.error(request, response['message'])
-        return render(request, 'memories/landing.html')
+        return redirect("/")
     
 @login_required(login_url='login_user')
 @api_view(['GET'])
@@ -63,16 +55,15 @@ def logout_user(request):
         logout(request)
     return redirect("/")
 
-
 @csrf_exempt
 @api_view(['POST'])
 def reset_password(request):
     response = user_controller.reset_password(request)
     if response['success']:
-        return redirect(reverse('users'))
+        return redirect("/")
     else:
         messages.error(request, response['message'])
-        return render(request, 'memories/landing.html')
+        return redirect("/")
     
 @login_required(login_url='login_user')
 @api_view(['GET'])
@@ -82,7 +73,7 @@ def profile(request):
         return render(request, 'memories/profile.html', response["context"])
     else:
         messages.error(request, response['message'])
-        return render(request, 'memories/landing.html')
+        return redirect("/")
 
 
 @login_required(login_url='login_user')
@@ -90,7 +81,8 @@ def profile(request):
 def update_profile(request):
     response = user_controller.update_profile(request)
     if response['success']:
-        return redirect(reverse("profile"))
+        # When the user password is updated, authorization is lost.
+        return redirect("/")
     else:
         messages.error(request, response['message'])
         return redirect(reverse('profile'))

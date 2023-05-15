@@ -83,7 +83,7 @@ def create_post(request):
                 tag, created = Tags.objects.get_or_create(tag=tag_name, story=story)
                 tag.save()
 
-        return render(request, 'memories/landing.html')
+        return redirect("/")
     
     else:
 

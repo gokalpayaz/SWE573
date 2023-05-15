@@ -14,7 +14,7 @@ urlpatterns = [
     # path('users/create', user_views.create_user),
     path('',base_views.base_view, name='base'),
     path('login', TemplateView.as_view(template_name='memories/login.html'), name='login'),
-    path('users/', user_views.get_all_users, name='users'),
+    # path('users/', user_views.get_all_users, name='users'),
     path('signup/', TemplateView.as_view(template_name='memories/signup.html'), name='signup'),
     path('create_user/', user_views.create_user, name='create_user'),
     path('login_user/', user_views.login_user, name='login_user'),
