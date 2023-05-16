@@ -17,6 +17,7 @@ from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
 from django.db.models import Q, Count
+from django.contrib.gis.measure import D
 from django.contrib.gis.geos import fromstr
 from django.contrib.gis.db.models.functions import Distance
 import json
@@ -99,7 +100,7 @@ def search_post(request):
         tags = request.POST.get('tags').split(',')
         location_name = request.POST['location-name']
         point = request.POST['location-point']
-        radius = request.POST['radius']
+        radius = float(request.POST['radius'])
         date_option = request.POST['date_option']
 
         # Get search inputs
@@ -113,11 +114,12 @@ def search_post(request):
             for tag in tags:
                 tags_query |= Q(tags__tag__icontains=tag)
             filters.append(tags_query)
-        if location_name:
+        if point:
             long = float(point.split(',')[0])
             lat = float(point.split(',')[1])
             selected_location = fromstr(f'POINT({long} {lat})', srid=4326)
-            location_ids = Location.objects.annotate(distance=Distance('point', selected_location)).filter(Q(distance__lte=radius) | Q(name__icontains=location_name)).values_list('id', flat=True)
+            radius = radius / 40000000.0 * 360.0
+            location_ids = Location.objects.annotate(distance=Distance('point', selected_location)).filter(distance__lte=radius).distinct().values_list('id', flat=True)
             location_query = Q(location__in=location_ids)  # using location instead of location_id
             filters.append(location_query)
 
@@ -149,6 +151,7 @@ def search_post(request):
             return render(request, 'memories/search_post.html')
         else:
             result = Story.objects.filter(*filters).distinct()
+            print(len(result))
             return render(request, 'memories/search_post.html', {'story_list': result})
 
 
