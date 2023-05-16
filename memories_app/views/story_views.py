@@ -98,7 +98,6 @@ def search_post(request):
         username = request.POST['username']
         title = request.POST['title']
         tags = request.POST.get('tags').split(',')
-        location_name = request.POST['location-name']
         point = request.POST['location-point']
         radius = float(request.POST['radius'])
         date_option = request.POST['date_option']
@@ -147,17 +146,50 @@ def search_post(request):
                 filters.append(date_query)
 
 
+
+        # Display found locations with red marker
+        context = []
+        if point:
+            for l in location_ids:
+                location = Location.objects.get(id=l)
+                context.append(
+                    {
+                        'x': location.point.x,
+                        'y': location.point.y
+                    }
+                )
+
+            # Convert the list to a JSON string
+            context_json = json.dumps(context)
+        else:
+            context_json = {}
+
         if len(filters)==0:
             return render(request, 'memories/search_post.html')
         else:
             result = Story.objects.filter(*filters).distinct()
             print(len(result))
-            return render(request, 'memories/search_post.html', {'story_list': result})
+            return render(request, 'memories/search_post.html', {'story_list': result,'locations':context_json})
 
 
         
     else:
-        return render(request, 'memories/search_post.html')
+        # Display all locations with red marker
+        locations = Location.objects.all()
+        context = []
+        for l in locations:
+            context.append(
+                {
+                    'x': l.point.x,
+                    'y': l.point.y
+                }
+            )
+
+        # Convert the list to a JSON string
+        context_json = json.dumps(context)
+
+
+        return render(request, 'memories/search_post.html', {'locations':context_json})
 
 @login_required(login_url='login')
 def landing_page(request):
