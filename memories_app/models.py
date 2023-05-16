@@ -82,6 +82,8 @@ class Date(models.Model):
     season = models.CharField(max_length=1, choices=season_choices, null=True, blank=True)
     year = models.PositiveIntegerField()
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    display_option = models.PositiveIntegerField()
+    displayed_text = models.CharField(max_length=40,null=True,blank=True)
 
 
 class StoryPhoto(models.Model):

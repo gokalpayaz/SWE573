@@ -17,7 +17,7 @@
                         <img src="{{ story.photos.first.photo.url }}" alt="Story photo" class="img-fluid" style="width: 200px;">
                     {% endif %}
                     <p class="card-text"><small class="text-muted">{% if story.location_set.first %}{{ story.location_set.first.name }}{% endif %}</small></p>
-                    <p class="card-text"><small class="text-muted">{% if story.date_set.first %}{{ story.date_set.first.start_date }}{% endif %}</small></p>
+                    <p class="card-text"><small class="text-muted">{% if story.date_set.first %}{{ story.date_set.first.displayed_text }}{% endif %}</small></p>
                     <a href="{% url 'story_detail' story.id %}" class="card-link">Read More</a>
                     <div class="d-flex align-items-center">
                         <span class="mr-2"><i class="far fa-comment"></i> {{ story.comments_set.count }}</span>

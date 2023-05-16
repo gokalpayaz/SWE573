@@ -53,6 +53,7 @@ def create_post(request):
 
         date = Date()
         if date_option == "exact_date":
+            date.display_option = 1
             exact_date_str = request.POST['exact_date']
             start_date = datetime.strptime(exact_date_str, '%Y-%m-%d').date()
             end_date = start_date
@@ -60,7 +61,10 @@ def create_post(request):
             date.end_date = end_date
             date.year = start_date.year
             date.season = get_season(start_date)
+            date.displayed_text = exact_date_str
+
         elif date_option == "interval":
+            date.display_option = 2
             start_date_str = request.POST['start_date']
             end_date_str = request.POST['end_date']
             start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
@@ -70,9 +74,12 @@ def create_post(request):
             avg_date = start_date + (end_date - start_date) / 2
             date.year = avg_date.year
             date.season = get_season(avg_date)
+            date.displayed_text = start_date_str + "<->" + end_date_str
         else:
+            date.display_option = 3
             date.year = request.POST['year']
             date.season = request.POST['season']
+            date.displayed_text = str(date.year)+date.season
 
         date.story = story
         date.save()
@@ -244,7 +251,8 @@ def submit_comment(request):
                              'comment_owner':request.user.username})
     else:
         return JsonResponse({'error': 'Invalid request'})
-@login_required(login_url='login')
+
+
 def get_season(date):
     if date.month == 12 or date.month < 3:
         return 'W'
