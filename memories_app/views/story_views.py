@@ -207,7 +207,8 @@ def landing_page(request):
 def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id)
     location = get_object_or_404(Location, id=story_id)
-    return render(request, 'memories/story_detail.html', {'story': story,'location':location})
+    date = get_object_or_404(Date, story_id=story_id)
+    return render(request, 'memories/story_detail.html', {'story': story,'location':location,'date':date})
 
 
 # Ajax (Asynchronous JavaScript and XML) is a technique used in web development to send and receive data
