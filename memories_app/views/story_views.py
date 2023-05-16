@@ -75,11 +75,22 @@ def create_post(request):
             date.year = avg_date.year
             date.season = get_season(avg_date)
             date.displayed_text = start_date_str + "<->" + end_date_str
-        else:
+
+        elif date_option == "season":
             date.display_option = 3
             date.year = request.POST['year']
             date.season = request.POST['season']
             date.displayed_text = str(date.year)+date.season
+
+        else:
+            date.display_option = 4
+            decade = int(request.POST["decade"][:-1])
+            start_date = datetime(decade,1,1).date()
+            end_date = datetime(decade+9,12,30).date()
+            avg_date = start_date + (end_date - start_date) / 2
+            date.year = avg_date.year
+            date.season = get_season(avg_date)
+            date.displayed_text = str(decade)+"s"
 
         date.story = story
         date.save()
