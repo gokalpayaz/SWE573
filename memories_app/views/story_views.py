@@ -155,7 +155,7 @@ def search_post(request):
                 date_query = Q(date__start_date__lte=end_date, date__end_date__gte=start_date)
                 filters.append(date_query)
 
-            else:  # date_option == "season"
+            elif date_option == "season":
                 year = request.POST.get('year', None)
                 season = request.POST.get('season', None)
                 year_query = Q(date__year=year) if year else Q()
@@ -163,7 +163,13 @@ def search_post(request):
                 date_query = year_query & season_query
                 filters.append(date_query)
 
-
+            else:
+                decade_text = request.POST['decade']
+                decade = int(decade_text[:-1])
+                start_date = datetime(decade,1,1).date()
+                end_date = datetime(decade+9,12,30).date()
+                date_query = Q(date__year__gte=decade, date__year__lte=(decade+10))
+                filters.append(date_query)
 
         # Display found locations with red marker
         context = []
