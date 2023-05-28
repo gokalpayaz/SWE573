@@ -38,8 +38,9 @@
         <span id="comment-count">{{story.comments_set.count }}</span></span>
       <span><i class="far fa-heart" id="like-icon" data-story-id="{{ story.id }}"></i> <span
           id="like-count">{{story.like_set.count }}</span></span>
-      <button id="follow-button" data-username="{{ story.user.username }}" data-following="{{ isFollowing }}"
-        class="ml-3 btn btn-primary">{{ follow_text }}</button>
+          <button id="follow-button" data-username="{{ story.user.username }}" data-following="{{ isFollowing }}"
+          class="ml-3 btn btn-primary">{{ follow_text }}</button>
+        
 
 
     </div>
@@ -189,19 +190,17 @@
       });
 
       // Get the follow button element
-      // Get the follow button element
       var followButton = document.getElementById('follow-button');
       // Retrieve the isFollowing value from the data-following attribute
       var isFollowing = followButton.getAttribute('data-following');
-      // Update the button text based on the follow status
-      followButton.textContent = isFollowing === 'true' ? 'Unfollow' : 'Follow';
+      
       // Add click event listener to the follow button
       followButton.addEventListener('click', function () {
         var username = followButton.getAttribute('data-username');
 
         // Send AJAX request to follow or unfollow the user
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/follow_user/');
+        xhr.open('POST', '/follow_or_unfollow_user/');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onload = function () {
           if (xhr.status === 200) {
@@ -220,8 +219,6 @@
         var data = JSON.stringify({ username: username, is_following: isFollowing });
         xhr.send(data);
       });
-
-
 
     </script>
 

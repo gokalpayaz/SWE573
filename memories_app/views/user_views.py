@@ -90,7 +90,7 @@ def update_profile(request):
 
 @csrf_exempt
 @login_required(login_url='login')
-def follow_user(request):
+def follow_or_unfollow_user(request):
     if request.method == 'POST':
         body = request.body.decode('utf-8')
         data = json.loads(body)
@@ -99,26 +99,11 @@ def follow_user(request):
             user = CustomUser.objects.get(username=username)
             follows, _ = Follows.objects.get_or_create(user=user)
             if request.user in follows.followers.all():
-                return JsonResponse({'error': 'User alrady being followed'}, status=400)
+                follows.followers.remove(request.user)
+                return JsonResponse({'message': 'User unfollowed successfully'})
             else:
                 follows.followers.add(request.user)
                 return JsonResponse({'message': 'User followed successfully'})
-        except CustomUser.DoesNotExist:
-            return JsonResponse({'error': 'User does not exist'}, status=404)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-@csrf_exempt
-@login_required(login_url='login')
-def unfollow_user(request):
-    if request.method == 'POST':
-        body = request.body.decode('utf-8')
-        data = json.loads(body)
-        username = data['username']
-        try:
-            user_to_unfollow = CustomUser.objects.get(username=username)
-            request.user.profile.follows.remove(user_to_unfollow)
-            return JsonResponse({'message': 'User unfollowed successfully'})
         except CustomUser.DoesNotExist:
             return JsonResponse({'error': 'User does not exist'}, status=404)
     else:
