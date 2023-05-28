@@ -38,8 +38,9 @@
         <span id="comment-count">{{story.comments_set.count }}</span></span>
       <span><i class="far fa-heart" id="like-icon" data-story-id="{{ story.id }}"></i> <span
           id="like-count">{{story.like_set.count }}</span></span>
-      <button id="follow-button" data-username="{{ story.user.username }}" data-following="{{ is_following }}"
+      <button id="follow-button" data-username="{{ story.user.username }}" data-following="{{ isFollowing }}"
         class="ml-3 btn btn-primary">{{ follow_text }}</button>
+
 
     </div>
 
@@ -56,7 +57,7 @@
               </div>
               <p class="card-text">{{ comment.text }}</p>
             </div>
-          </div>  
+          </div>
           {% endfor %}
         </div>
       </div>
@@ -188,12 +189,15 @@
       });
 
       // Get the follow button element
+      // Get the follow button element
       var followButton = document.getElementById('follow-button');
-
+      // Retrieve the isFollowing value from the data-following attribute
+      var isFollowing = followButton.getAttribute('data-following');
+      // Update the button text based on the follow status
+      followButton.textContent = isFollowing === 'true' ? 'Unfollow' : 'Follow';
       // Add click event listener to the follow button
       followButton.addEventListener('click', function () {
         var username = followButton.getAttribute('data-username');
-        var isFollowing = followButton.getAttribute('data-following');
 
         // Send AJAX request to follow or unfollow the user
         var xhr = new XMLHttpRequest();
@@ -202,11 +206,11 @@
         xhr.onload = function () {
           if (xhr.status === 200) {
             // Update the follow status and text
-            isFollowing = !isFollowing;
+            isFollowing = isFollowing === 'true' ? 'false' : 'true';
             followButton.setAttribute('data-following', isFollowing);
 
             // Update the button text based on the follow status
-            followButton.textContent = isFollowing ? 'Unfollow' : 'Follow';
+            followButton.textContent = isFollowing === 'true' ? 'Unfollow' : 'Follow';
           } else {
             console.log('An error occurred');
           }
@@ -216,6 +220,7 @@
         var data = JSON.stringify({ username: username, is_following: isFollowing });
         xhr.send(data);
       });
+
 
 
     </script>
