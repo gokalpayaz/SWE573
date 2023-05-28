@@ -12,7 +12,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
-from ..models import Tags, Story, Location, StoryPhoto, Date, Like, Comments
+from ..models import Tags, Story, Location, StoryPhoto, Date, Like, Comments, Follows
 from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
@@ -225,7 +225,19 @@ def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id)
     location = get_object_or_404(Location, id=story_id)
     date = get_object_or_404(Date, story_id=story_id)
-    return render(request, 'memories/story_detail.html', {'story': story,'location':location,'date':date})
+
+    is_following = False
+    follow_text = "Follow"
+    follows = Follows.objects.filter(user=story.user).first()
+    if follows and request.user in follows.followers.all():
+        is_following = True
+        follow_text ="Unfollow"
+    return render(request, 'memories/story_detail.html', {
+        'story': story,
+        'location':location,
+        'date':date,
+        'isFollowing':is_following,
+        'follow_text': follow_text})
 
 
 # Ajax (Asynchronous JavaScript and XML) is a technique used in web development to send and receive data
