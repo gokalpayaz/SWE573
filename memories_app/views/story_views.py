@@ -16,7 +16,7 @@ from ..models import Tags, Story, Location, StoryPhoto, Date, Like, Comments, Fo
 from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Case, When, BooleanField
 from django.contrib.gis.measure import D
 from django.contrib.gis.geos import fromstr
 from django.contrib.gis.db.models.functions import Distance
@@ -217,8 +217,23 @@ def search_post(request):
 
 @login_required(login_url='login')
 def landing_page(request):
-    stories = Story.objects.annotate(like_count=Count('like')).order_by('-like_count')[:5]
-    return render(request, 'memories/landing_page.html', {'story_list': stories})
+    # Get the stories of the people you follow
+    followed_stories = Story.objects.filter(user__follows__followers=request.user)
+
+    # Get the remaining stories
+    other_stories = Story.objects.exclude(user__follows__followers=request.user)
+
+    # Annotate and order by the like count for each story
+    followed_stories = followed_stories.annotate(like_count=Count('like')).order_by('-like_count')
+    other_stories = other_stories.annotate(like_count=Count('like')).order_by('-like_count')
+
+    # Convert the querysets to lists
+    followed_stories_list = list(followed_stories)
+    other_stories_list = list(other_stories)
+
+    # Concatenate the two story lists
+    stories = followed_stories_list + other_stories_list
+    return render(request, 'memories/landing_page.html', {'story_list': stories[:10]})
 
 @login_required(login_url='login')
 def story_detail(request, story_id):
