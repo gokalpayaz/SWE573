@@ -4,3 +4,4 @@ from .models import *
 # Register your models here.
 # These models will be accessible from admin panel.
 admin.site.register(CustomUser)
+admin.site.register(Story)
