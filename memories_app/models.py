@@ -63,6 +63,10 @@ class Comments(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     text = models.TextField(max_length=200)
 
+class Follows(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    followers = models.ManyToManyField(CustomUser, related_name='following', blank=True)
+    
 class Location(models.Model):
     name = models.CharField(max_length=255)
     point = geo_models.PointField(null=True, blank=True)
