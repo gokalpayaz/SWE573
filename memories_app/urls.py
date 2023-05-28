@@ -29,6 +29,8 @@ urlpatterns = [
     path('story/<int:story_id>/', story_views.story_detail, name='story_detail'),
     path('like_story/',story_views.like_story, name='like_story'),
     path('submit_comment/',story_views.submit_comment, name='submit_comment'),
+    path('follow_user/', user_views.follow_user, name='follow_user'),
+    path('unfollow_user/', user_views.unfollow_user, name='unfollow_user'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

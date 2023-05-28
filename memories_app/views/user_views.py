@@ -12,8 +12,9 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from ..controllers.user_controller import UserController
-from ..models import CustomUser
+from ..models import CustomUser, Follows
 from django.conf import settings
+import json
 
 # redirect--> Django creates a redirect response that tells the client's web browser 
 # to navigate to the specified URL. The client's web browser then sends a new HTTP request to the URL,
@@ -87,3 +88,38 @@ def update_profile(request):
         messages.error(request, response['message'])
         return redirect(reverse('profile'))
 
+@csrf_exempt
+@login_required(login_url='login')
+def follow_user(request):
+    if request.method == 'POST':
+        body = request.body.decode('utf-8')
+        data = json.loads(body)
+        username = data['username']
+        try:
+            user = CustomUser.objects.get(username=username)
+            follows, _ = Follows.objects.get_or_create(user=user)
+            if request.user in follows.followers.all():
+                return JsonResponse({'error': 'User alrady being followed'}, status=400)
+            else:
+                follows.followers.add(request.user)
+                return JsonResponse({'message': 'User followed successfully'})
+        except CustomUser.DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+@login_required(login_url='login')
+def unfollow_user(request):
+    if request.method == 'POST':
+        body = request.body.decode('utf-8')
+        data = json.loads(body)
+        username = data['username']
+        try:
+            user_to_unfollow = CustomUser.objects.get(username=username)
+            request.user.profile.follows.remove(user_to_unfollow)
+            return JsonResponse({'message': 'User unfollowed successfully'})
+        except CustomUser.DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
